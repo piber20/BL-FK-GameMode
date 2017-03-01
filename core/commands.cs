@@ -1,0 +1,307 @@
+function serverCmdSetRound(%client, %i)
+{
+	if(!%client.isAdmin)
+		return;
+	
+	if(mFloor(%i) !$= %i)
+	{
+		messageClient(%client, '', "Usage: /setRound <number>");
+		return;
+	}
+	
+	if($FK::Pref::Rounds::PerTrack <= 0)
+	{
+		messageClient(%client, '', "Track rotation is off. Setting the round will do nothing.");
+		return;
+	}
+	
+	if(%i > $FK::Pref::Rounds::PerTrack)
+		%i = $FK::Pref::Rounds::PerTrack;
+	
+	for(%aaa = 0; %aaa < $DefaultMinigame.numMembers; %aaa++)
+	{
+		%member = $DefaultMinigame.member[%aaa];
+		if(isObject(%member))
+		{
+			commandToClient(%member, 'bottomPrint', "", 0, true);
+			%camera = %member.camera;
+			%camera.setFlyMode();
+			%camera.mode = "Observer";
+			%member.setControlObject(%camera);
+		}
+	}
+	
+	messageAll('MsgAdminForce', '\c3%1\c2 changed the round to \c3round %2\c2.', %client.getPlayerName(), %i);
+	
+	$FK::ResetCount = %i - 1;
+	$DefaultMiniGame.scheduleReset();
+}
+
+function serverCmdNextRound(%client)
+{
+	if(!%client.isAdmin)
+		return;
+	
+	messageAll('MsgAdminForce', '\c3%1\c2 skipped the round.', %client.getPlayerName());
+	if($FK::ResetCount >= $FK::Pref::Rounds::PerTrack && $FK::Pref::Rounds::PerTrack > 0)
+	{
+		serverCmdNextTrack(%client);
+		return;
+	}
+	
+	for(%aaa = 0; %aaa < $DefaultMinigame.numMembers; %aaa++)
+	{
+		%member = $DefaultMinigame.member[%aaa];
+		if(isObject(%member))
+		{
+			commandToClient(%member, 'bottomPrint', "", 0, true);
+			%camera = %member.camera;
+			%camera.setFlyMode();
+			%camera.mode = "Observer";
+			%member.setControlObject(%camera);
+		}
+	}
+	
+	$DefaultMiniGame.scheduleReset();
+}
+
+function serverCmdSkipRound(%client)
+{
+	serverCmdNextRound(%client);
+}
+
+function serverCmdSetTrack(%client, %i)
+{
+	if(!%client.isAdmin)
+		return;
+	
+	if(mFloor(%i) !$= %i)
+	{
+		messageClient(%client, '', "Usage: /setTrack <number>");
+		return;
+	}
+
+	if(%i < 0 || %i > $FK::numTracks)
+	{
+		messageClient(%client, '', "serverCmdSetTrack() - out of range index");
+		return;
+	}
+	
+	messageAll('MsgAdminForce', '\c3%1\c2 set the track to \c3%2\c2.', %client.getPlayerName(), FK_getTrackName(%i));
+	
+	$FK::CurrentTrack = %i - 1;
+	$FK::BypassRandom = true;
+	FK_NextTrack();
+}
+
+function serverCmdSetMap(%client, %i)
+{
+	serverCmdSetTrack(%client, %i);
+}
+
+function serverCmdNextTrack(%client, %i)
+{
+	if(!%client.isAdmin)
+		return;
+	
+	messageAll( 'MsgAdminForce', '\c3%1\c2 skipped the track', %client.getPlayerName());
+	
+	FK_NextTrack();
+}
+function serverCmdNextMap(%client, %i)
+{
+	serverCmdNextTrack(%client, %i);
+}
+function serverCmdSkipTrack(%client, %i)
+{
+	serverCmdNextTrack(%client, %i);
+}
+function serverCmdSkipMap(%client, %i)
+{
+	serverCmdNextTrack(%client, %i);
+}
+
+function serverCmdRandomTrack(%client)
+{
+	if(!%client.isAdmin)
+		return;
+	
+	messageAll('MsgAdminForce', '\c3%1\c2 skipped to a random track.', %client.getPlayerName());
+	
+	for(%aaa = 0; %aaa < $DefaultMinigame.numMembers; %aaa++)
+	{
+		%member = $DefaultMinigame.member[%aaa];
+		if(isObject(%member))
+		{
+			commandToClient(%member, 'bottomPrint', "", 0, true);
+			%camera = %member.camera;
+			%camera.setFlyMode();
+			%camera.mode = "Observer";
+			%member.setControlObject(%camera);
+		}
+	}
+	
+	$FK::ForceRandom = true;
+	schedule(3000, 0, FK_NextTrack);
+}
+
+function serverCmdRandomMap(%client)
+{
+	serverCmdRandomTrack(%client);
+}
+
+//TRACK VOTING COMMANDS
+function serverCmdVoteTrack(%client, %i)
+{
+	if($FK::Pref::Tracks::Voting $= 0)
+	{
+		messageClient(%client, '', "Track voting is disabled.");
+		return;
+	}
+	
+	if(mFloor(%i) !$= %i)
+	{
+		messageClient(%client, '', "Usage: /vt <number>");
+		return;
+	}
+	
+	if($FK::VoteInProgress)
+	{
+		messageClient(%client, '', "There's already a vote in progress. Type /cv to see what it is and /rtv to rock it.");
+		return;
+	}
+	
+	if(%i == $FK::CurrentTrack)
+	{
+		messageClient(%client, '', "You're playing in that track right now.");
+		return;
+	}
+
+	if(mfloor(%i) < 0)
+		%i = 0;
+	
+	if(mfloor(%i) >= $FK::numTracks)
+		%i = $FK::numTracks - 1;
+	
+	echo(%client.getPlayerName() @ " started a vote to change the track to " @ FK_getTrackName(mfloor(%i)) @ ".");
+	messageAll('MsgAdminForce', '\c3%1\c2 voted to set the track to \c3%2\c2.', %client.getPlayerName(), FK_getTrackName(mfloor(%i)));
+	messageAll('MsgAdminForce', '\c2Type \c3/rtv\c2 to rock the vote!');
+	$FK::VoteInProgress = true;
+	$FK::VoteTrack = mfloor(%i);
+	%client.FK_isRockingVote = true;
+	
+	if($DefaultMinigame.numMembers == 1)
+	{
+		echo("Votes resulted in the track changing next round.");
+		messageAll('MsgAdminForce', '\c2Enough people rocked the vote that the track will change \c3next round\c2!');
+		$FK::VoteNextRound = true;
+	}
+}
+
+function serverCmdVT(%client, %i)
+{
+	serverCmdVoteTrack(%client, %i);
+}
+
+function serverCmdVoteMap(%client, %i)
+{
+	serverCmdVoteTrack(%client, %i);
+}
+
+function serverCmdVM(%client, %i)
+{
+	serverCmdVoteTrack(%client, %i);
+}
+
+function serverCmdCurrentVote(%client)
+{
+	if(!$FK::VoteInProgress)
+	{
+		messageClient(%client, '', "There's no vote in progress.");
+		return;
+	}
+	
+	messageClient(%client, '', "\c6A vote is in progress to set the track to \c3" @ FK_getTrackName($FK::VoteTrack) @ "\c6.");
+	
+	if(%client.FK_isRockingVote)
+		messageClient(%client, '', "\c6You're rocking the vote right now.");
+	else
+		messageClient(%client, '', "\c6Type \c3/rtv\c6 to rock the vote!");
+}
+
+function serverCmdCV(%client)
+{
+	serverCmdCurrentVote(%client);
+}
+
+function serverCmdRockTheVote(%client)
+{
+	if(!$FK::VoteInProgress)
+	{
+		messageClient(%client, '', "There's no vote in progress.");
+		return;
+	}
+	
+	if(%client.FK_isRockingVote)
+	{
+		messageClient(%client, '', "You've already rocked the vote.");
+		return;
+	}
+	
+	echo(%client.getPlayerName() @ " rocked the vote.");
+	messageAll('MsgAdminForce', '\c3%1\c2 rocked the vote!', %client.getPlayerName());
+	%client.FK_isRockingVote = true;
+	FK_CheckVotes();
+}
+
+function serverCmdRTV(%client)
+{
+	serverCmdRockTheVote(%client);
+}
+
+function FK_CheckVotes()
+{
+	for(%a = 0; %a < $DefaultMinigame.numMembers; %a++)
+	{
+		%member = $DefaultMinigame.member[%a];
+		if(isObject(%member))
+		{
+			if(%member.FK_isRockingVote)
+				%rockers++;
+		}
+	}
+	
+	%sub = $DefaultMinigame.numMembers * 0.7;
+	if(%rockers >= %sub && $FK::Pref::Tracks::Voting !$= 2)
+	{
+		echo("Votes resulted in the track changing immediately.");
+		messageAll('MsgAdminForce', '\c2Enough people rocked the vote that the track will change \c3right now\c2!');
+		
+		for(%aaa = 0; %aaa < $DefaultMinigame.numMembers; %aaa++)
+		{
+			%member = $DefaultMinigame.member[%aaa];
+			if(isObject(%member))
+			{
+				commandToClient(%member, 'bottomPrint', "", 0, true);
+				%camera = %member.camera;
+				%camera.setFlyMode();
+				%camera.mode = "Observer";
+				%member.setControlObject(%camera);
+			}
+		}
+		
+		$FK::CurrentTrack = $FK::VoteTrack - 1;
+		$FK::BypassRandom = true;
+		schedule(3000, 0, FK_NextTrack);
+		return;
+	}
+	
+	%subb = $DefaultMinigame.numMembers * 0.4;
+	if(%rockers >= %subb && !$FK::VoteNextRound)
+	{
+		echo("Votes resulted in the track changing next round.");
+		messageAll('MsgAdminForce', '\c2Enough people rocked the vote that the track will change \c3next round\c2!');
+		$FK::VoteNextRound = true;
+		return;
+	}
+}

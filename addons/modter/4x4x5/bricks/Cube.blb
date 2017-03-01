@@ -1,0 +1,130 @@
+4 4 5
+SPECIALBRICK
+
+1
+
+0 0 0
+4 4 5
+COVERAGE:
+1 : 16
+1 : 16
+1 : 20
+1 : 20
+1 : 20
+1 : 20
+----------------top quads:
+1
+
+TEX:PRINT
+POSITION:
+2 2 2.5
+2 -2 2.5
+-2 -2 2.5
+-2 2 2.5
+UV COORDS: //z
+0 0
+1 0
+1 1
+0 1
+NORMALS:
+0 0 1
+0 0 1
+0 0 1
+0 0 1
+----------------bottom quads:
+1
+
+TEX:PRINT
+POSITION:
+-2 2 -2.5
+-2 -2 -2.5
+2 -2 -2.5
+2 2 -2.5
+UV COORDS: //z
+0 0
+1 0
+1 1
+0 1
+NORMALS:
+0 0 -1
+0 0 -1
+0 0 -1
+0 0 -1
+----------------north quads:
+1
+
+TEX:PRINT
+POSITION:
+2 2 2.5
+-2 2 2.5
+-2 2 -2.5
+2 2 -2.5
+UV COORDS: //y
+0 0
+1 0
+1 0.5
+0 0.5
+NORMALS:
+0 1 0
+0 1 0
+0 1 0
+0 1 0
+----------------east quads:
+1
+
+TEX:PRINT
+POSITION:
+2 -2 2.5
+2 2 2.5
+2 2 -2.5
+2 -2 -2.5
+UV COORDS: //x
+0 0
+1 0
+1 0.5
+0 0.5
+NORMALS:
+1 0 0
+1 0 0
+1 0 0
+1 0 0
+----------------south quads:
+1
+
+TEX:PRINT
+POSITION:
+-2 -2 2.5
+2 -2 2.5
+2 -2 -2.5
+-2 -2 -2.5
+UV COORDS: //y
+0 0
+1 0
+1 0.5
+0 0.5
+NORMALS:
+0 -1 0
+0 -1 0
+0 -1 0
+0 -1 0
+----------------west quads:
+1
+
+TEX:PRINT
+POSITION:
+-2 2 2.5
+-2 -2 2.5
+-2 -2 -2.5
+-2 2 -2.5
+UV COORDS: //x
+0 0
+1 0
+1 0.5
+0 0.5
+NORMALS:
+-1 0 0
+-1 0 0
+-1 0 0
+-1 0 0
+----------------omni quads:
+0

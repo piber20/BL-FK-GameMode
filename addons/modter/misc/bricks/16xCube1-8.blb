@@ -1,0 +1,228 @@
+16 16 5
+SPECIAL
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+uuuuuuuuuuuuuuuu
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx
+dddddddddddddddd
+
+1
+
+0 0 0
+16 16 5
+COVERAGE:
+1 : 256
+1 : 256
+1 : 80
+1 : 80
+1 : 80
+1 : 80
+----------------top quads:
+1
+
+TEX:PRINT
+POSITION:
+-8.000058 7.999941 2.500000
+7.999941 8.000058 2.500000
+8.000058 -7.999941 2.500000
+-7.999941 -8.000058 2.500000
+UV COORDS:
+0.000000 2.000000
+0.000000 0.000000
+2.000000 0.000000
+2.000000 2.000000
+NORMALS:
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+0.000000 0.000000 1.000000
+----------------bottom quads:
+1
+
+TEX:PRINT
+POSITION:
+7.999941 8.000058 -2.500000
+-8.000058 7.999941 -2.500000
+-7.999941 -8.000058 -2.500000
+8.000058 -7.999941 -2.500000
+UV COORDS:
+0.000000 -2.000000
+0.000000 0.000000
+-2.000000 0.000000
+-2.000000 -2.000000
+NORMALS:
+0.000000 -0.000000 -1.000000
+0.000000 -0.000000 -1.000000
+0.000000 -0.000000 -1.000000
+0.000000 -0.000000 -1.000000
+----------------north quads:
+1
+
+TEX:PRINT
+POSITION:
+7.999941 8.000058 -2.500000
+7.999941 8.000058 2.500000
+-8.000058 7.999941 2.500000
+-8.000058 7.999941 -2.500000
+UV COORDS:
+0.000000 0.250000
+0.000000 0.000000
+2.000000 0.000000
+2.000000 0.250000
+NORMALS:
+-0.000007 1.000000 0.000000
+-0.000007 1.000000 0.000000
+-0.000007 1.000000 0.000000
+-0.000007 1.000000 0.000000
+----------------east quads:
+1
+
+TEX:PRINT
+POSITION:
+7.999941 8.000058 -2.500000
+8.000058 -7.999941 -2.500000
+8.000058 -7.999941 2.500000
+7.999941 8.000058 2.500000
+UV COORDS:
+2.000000 0.250000
+0.000000 0.250000
+0.000000 0.000000
+2.000000 0.000000
+NORMALS:
+1.000000 0.000007 0.000000
+1.000000 0.000007 0.000000
+1.000000 0.000007 0.000000
+1.000000 0.000007 0.000000
+----------------south quads:
+1
+
+TEX:PRINT
+POSITION:
+-7.999941 -8.000058 -2.500000
+-7.999941 -8.000058 2.500000
+8.000058 -7.999941 2.500000
+8.000058 -7.999941 -2.500000
+UV COORDS:
+0.000000 0.250000
+0.000000 0.000000
+2.000000 0.000000
+2.000000 0.250000
+NORMALS:
+0.000007 -1.000000 0.000000
+0.000007 -1.000000 0.000000
+0.000007 -1.000000 0.000000
+0.000007 -1.000000 0.000000
+----------------west quads:
+1
+
+TEX:PRINT
+POSITION:
+-8.000058 7.999941 2.500000
+-7.999941 -8.000058 2.500000
+-7.999941 -8.000058 -2.500000
+-8.000058 7.999941 -2.500000
+UV COORDS:
+0.000000 0.000000
+2.000000 0.000000
+2.000000 0.250000
+0.000000 0.250000
+NORMALS:
+-1.000000 -0.000007 0.000000
+-1.000000 -0.000007 0.000000
+-1.000000 -0.000007 0.000000
+-1.000000 -0.000007 0.000000
+----------------omni quads:
+0
+
+//Converted with General's (Blockland ID: 4878) Obj2Blb converter.

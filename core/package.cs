@@ -561,8 +561,8 @@ package GameModeFASTKartsPackage
 			//brake
 			%text = %text @ "<br>\c6Brake Power" @ %color @ ": " @ %data.brakeTorque @ " ";
 			
-			//density
-			%text = %text @ "<br>\c6Drift Density" @ %color @ ": " @ %data.density @ " ";
+			//drag
+			%text = %text @ "<br>\c6Drag" @ %color @ ": " @ %data.drag @ " ";
 			
 			//description
 			%text = %text @ "<br>\c6" @ %data.FKDescription @ " ";

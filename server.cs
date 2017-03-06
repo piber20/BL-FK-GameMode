@@ -9,7 +9,7 @@ if($GameModeArg !$= "Add-Ons/GameMode_FASTKarts/gamemode.txt" )
 
 function FK_SystemPrefs()
 {
-	$FK::Pref::System::Version = 7;
+	$FK::Pref::System::Version = 7.1;
 	$FK::Pref::System::Format = 2;
 }
 

@@ -50,4 +50,6 @@ Stable Download: http://piber20.com/d/bl/GameMode_FASTKarts.zip
 
 Tracks: http://piber20.com/d/bl/fk/
 
-Tracks Repository: https://github.com/piber20/BL-FK-Tracks
+Tracks Repository: https://github.com/piber20/BL-FK-Tracks56
+
+Discord: https://discord.gg/Xhu2ktM

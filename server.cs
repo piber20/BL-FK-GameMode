@@ -9,7 +9,7 @@ if($GameModeArg !$= "Add-Ons/GameMode_FASTKarts/gamemode.txt" )
 
 function FK_SystemPrefs()
 {
-	$FK::Pref::System::Version = 7.1;
+	$FK::Pref::System::Version = 7.2;
 	$FK::Pref::System::Format = 2;
 }
 
@@ -196,16 +196,16 @@ function FK_RegisterRTBPrefs()
 	RTB_registerPref("I <3 SpeedKart",							"FASTKarts - Presets",				"$FK::Preset::SpeedKart",						"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Give me everything.",						"FASTKarts - Presets",				"$FK::Preset::Everything",						"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
 	
-	RTB_registerPref("First add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon1",						"string 0 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Second add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon2",						"string 0 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Third add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon3",						"string 0 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Fourth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon4",						"string 0 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Fifth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon5",						"string 0 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Sixth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon6",						"string 0 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Seventh add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon7",						"string 0 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Eighth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon8",						"string 0 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Ninth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon9",						"string 0 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Tenth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon10",						"string 0 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("First add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon1",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Second add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon2",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Third add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon3",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Fourth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon4",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Fifth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon5",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Sixth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon6",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Seventh add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon7",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Eighth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon8",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Ninth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon9",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Tenth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon10",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
 }
 
 if(!$FK::Initialized)

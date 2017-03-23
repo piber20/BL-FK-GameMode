@@ -26,8 +26,6 @@ Many of the gamemode's features can be controlled with preferences that can be c
 # Contributing
 The gamemode is at a "completed" state, but you can still help by fixing bugs or adding some quality-of-life features. Feel free to create pull requests and we'll take a look at it!
 
-This gamemode does have a style in mind, and there is some balancing in place, so be sure to keep these in mind.
-
 # License
 This gamemode is published under GNU General Public License 3.0.
 

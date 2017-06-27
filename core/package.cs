@@ -72,7 +72,12 @@ package GameModeFASTKartsPackage
 		Parent::onAdd(%data, %obj);
 		
 		for(%i = 0; %i < %data.numWheels; %i++)
-			%obj.setWheelPowered(%i, %on);
+		{
+			if($FK::TrackStarted) //karts spawned after the race begins will be powered
+				%obj.setWheelPowered(%i, 1);
+			else
+				%obj.setWheelPowered(%i, 0);
+		}
 	}
 
 	//also you cannot click-push a vehicle while it is in non-moving mode
@@ -394,7 +399,7 @@ package GameModeFASTKartsPackage
 				%weapon4 = 0;
 				
 				//get loadouts based on round type
-				if($FK::RoundType $= "NORMAL")
+				if($FK::RoundType $= "NORMAL" || $FK::RoundType $= "BOUNCY")
 				{
 					%weapon0 = BangGunItem.getID();
 					%weapon1 = BananaItem.getID();
@@ -404,7 +409,9 @@ package GameModeFASTKartsPackage
 				}
 				else if($FK::RoundType $= "ROCKET")
 					%weapon0 = MegaNukeEmptyItem.getID(); //temp filler item for when the real weapon is added after the race starts
-				else if($FK::RoundType $= "BOUNCY")
+				
+				//change playertype based on round type
+				if($FK::RoundType $= "BOUNCY")
 					%player.changeDataBlock(BouncyPlayer);
 				
 				//apply loadout
@@ -516,10 +523,7 @@ package GameModeFASTKartsPackage
 		}
 		
 		//get round color
-		if(%client.DMTeam > 0)
-			%color = FK_getRoundColorString();
-		else
-			%color = "\c3";
+		%color = FK_getRoundColorString();
 		
 		//chat emotes compatability
 		if(isFunction(peReplace))
@@ -620,10 +624,7 @@ package GameModeFASTKartsPackage
 		}
 		
 		//get round color
-		if(%client.DMTeam > 0)
-			%color = FK_getRoundColorString();
-		else
-			%color = "\c3";
+		%color = FK_getRoundColorString();
 		
 		//chat emotes compatability
 		if(isFunction(peReplace))
@@ -728,6 +729,13 @@ package GameModeFASTKartsPackage
 		}
 	}
 	
+	function serverCmdleaveMiniGame(%client)
+	{
+		Parent::serverCmdleaveMiniGame(%client);
+		bottomPrint(%client, "", 0, true);
+		centerPrint(%client, "", 0);
+	}
+	
 	function disconnect()
 	{
 		//Stops the ticks just incase you're not hosting a dedicated server. You should still restart blockland just to be safe and to minimise problems.
@@ -737,7 +745,7 @@ package GameModeFASTKartsPackage
 			cancel($FK::TipTick);
 		}
 		
-		parent::disconnect();
+		return parent::disconnect();
 	}
 };
 activatePackage(GameModeFASTKartsPackage);

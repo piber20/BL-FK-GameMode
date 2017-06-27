@@ -5,7 +5,7 @@ function FK_getAchievementDescription(%achievement)
 	if(%achievement $= "Hugs Make Things Better")
 		%description = "Use the hug command.";
 	if(%achievement $= "I Think it Burns")
-		%description = "Jump in to a pool of lava.";
+		%description = "Jump in to a pool of water.";
 	if(%achievement $= "Fallure")
 		%description = "Fall ten times and die.";
 	if(%achievement $= "Where am I")
@@ -82,8 +82,8 @@ function sendAchievements(%client) //overwriting the original add-on, we're taki
 	sendLockedAchievementToClient(%client, "moneysign",	"Treasure",					FK_getAchievementDescription("Treasure"),					%general);
 	sendLockedAchievementToClient(%client, "lego",		"Treasure Hunter",			FK_getAchievementDescription("Treasure Hunter"),			%general);
 	sendLockedAchievementToClient(%client, "unknown",	"Road Kill",				FK_getAchievementDescription("Road Kill"),					%deathmatch);
-	sendLockedAchievementToClient(%client, "number1",	"Getting Started",			FK_getAchievementDescription("Getting Started"),			%deathmatch);
-	sendLockedAchievementToClient(%client, "number1",	"Winner",					FK_getAchievementDescription("Winner"),						%deathmatch);
+	sendLockedAchievementToClient(%client, "number1",	"Getting Started",			FK_getAchievementDescription("Getting Started"),			%general);
+	sendLockedAchievementToClient(%client, "number1",	"Winner",					FK_getAchievementDescription("Winner"),						%general);
 }
 
 if(isPackage(FKAchievementsPackage))
@@ -96,20 +96,19 @@ package FKAchievementsPackage
 		if(%player.getType() & $TypeMasks::PlayerObjectType)
 		{
 			%playerPosition = %player.getPosition();
-			parent::onDeath(%this, %killerPlayer, %killer, %damageType, %damageLoc);
 			
 			if(%killer != %this && isObject(%killer))
 			{
-				if(%damageType $= $DamageType::Vehicle)
+				if(%damageType == $DamageType::Vehicle)
 					unlockClientAchievement(%killer, "Road Kill");
 			}
 			
-			if(%damageType $= $DamageType::Fall) 
+			if(%damageType == $DamageType::Fall) 
 			{
-				$FK_Player[%this.bl_id, "LavaDeaths"]++;
+				%this.lavaDeaths++;
 				unlockClientAchievement(%this, "I Think it Burns");
 				
-				if($FK_Player[%this.bl_id, "LavaDeaths"] >= 10)
+				if(%this.lavaDeaths >= 10)
 					unlockClientAchievement(%this, "Fallure");
 			}
 	

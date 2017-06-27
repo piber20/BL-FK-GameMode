@@ -16,3 +16,5 @@ Removed pref-changing commands to simplify things - you now need to use Glass or
 
 Players are now killed after 30 seconds of not being in a vehicle
 This can be customised with a pref - Setting it to -1 will disable this feature
+
+Speedkarts spawned after the race begins will now spawn powered

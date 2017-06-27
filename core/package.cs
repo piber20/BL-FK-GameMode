@@ -38,60 +38,6 @@ package GameModeFASTKartsPackage
 		
 		FK_ResetSuicideGambling();
 	}
-
-	function serverCmdmessageSent(%client, %text)
-	{
-		//strip and trim it and see if it's blank
-		%text = stripMLControlChars(%text);
-		%text = trim(%text);
-		if(%text $= "")
-			return;
-		
-		//catch flood protection
-		if(%client.FK_isChatSpam(%text))
-			return;
-		
-		//passed flood protection, record this message for future flood protection
-		%client.lastMessageTime = getSimTime();
-		%client.lastMessage = %text;
-		
-		//chat emotes compatability
-		if(isFunction(peReplace) && strPos(%text, ":") >= 0)
-		{
-			%text = peReplace(%text);
-		}
-		
-		//send the message
-		echo(%client.getPlayerName() @ ": " @ %text);
-		if(strPos(%text, "http://") < 0 && strPos(%text, "https://") < 0)
-			messageAll('', %client.FK_buildChatPrefix() @ %client.FK_buildChatName() @ %client.FK_buildChatSuffix() @ "\c6: " @ %text);
-		else //we parent to default chat if a link is detected because i am lazy and stupid
-			parent::serverCmdmessageSent(%client, %text);
-	}
-	
-	function serverCmdTeamMessageSent(%client, %text)
-	{
-		//strip and trim it and see if it's blank
-		%text = stripMLControlChars(%text);
-		%text = trim(%text);
-		if(%text $= "")
-			return;
-		
-		//catch flood protection
-		if(%client.FK_isChatSpam(%text))
-			return;
-		
-		//passed flood protection, record this message for future flood protection
-		%client.lastMessageTime = getSimTime();
-		%client.lastMessage = %text;
-		
-		//send the message
-		echo(%client.getPlayerName() @ ": " @ %text);
-		if(strPos(%text, "http://") < 0 && strPos(%text, "https://") < 0)
-			messageAll('', %client.FK_buildChatPrefix() @ %client.FK_buildChatName() @ %client.FK_buildChatSuffix() @ "\c4: " @ %text);
-		else //we parent to default chat if a link is detected because i am lazy and stupid
-			parent::serverCmdTeamMessageSent(%client, %text);
-	}
 	
 	//vehicles should explode in water
 	function VehicleData::onEnterLiquid(%data, %obj, %coverage, %type)
@@ -325,7 +271,7 @@ package GameModeFASTKartsPackage
 	function MiniGameSO::Reset(%obj, %client)
 	{
 		//make sure this value is an number
-		$FK::Pref::Rounds::PerTrack = mFloor($FK::Pref::Rounds::PerTrack);
+		$Pref::Server::FASTKarts::RoundLimit = mFloor($Pref::Server::FASTKarts::RoundLimit);
 
 		//handle our race time hack
 		%obj.raceStartTime = 0;
@@ -335,8 +281,8 @@ package GameModeFASTKartsPackage
 			$FK::ResetCount++;
 		
 		//force round number to the last round to effectively stop track rotation
-		if($FK::ResetCount > $FK::Pref::Rounds::PerTrack && $FK::Pref::Rounds::PerTrack <= 0)
-			$FK::ResetCount = $FK::Pref::Rounds::PerTrack;
+		if($FK::ResetCount > $Pref::Server::FASTKarts::RoundLimit && $Pref::Server::FASTKarts::RoundLimit <= 0)
+			$FK::ResetCount = $Pref::Server::FASTKarts::RoundLimit;
 
 		if($FK::VoteNextRound)
 		{
@@ -346,7 +292,7 @@ package GameModeFASTKartsPackage
 			$FK::onWinRaceList = "";
 			FK_NextTrack();
 		}
-		else if($FK::ResetCount > $FK::Pref::Rounds::PerTrack && $FK::Pref::Rounds::PerTrack > 0)
+		else if($FK::ResetCount > $Pref::Server::FASTKarts::RoundLimit && $Pref::Server::FASTKarts::RoundLimit > 0)
 		{
 			$FK::ResetCount = 0;
 			$FK::onWinRaceList = "";
@@ -366,8 +312,8 @@ package GameModeFASTKartsPackage
 			echo("Beginning round...");
 			FK_DetermineRoundType();
 			
-			if($FK::Pref::Rounds::PerTrack > 0)
-				messageAll('', "\c5Beginning round " @ $FK::ResetCount @ " of " @ $FK::Pref::Rounds::PerTrack @ ".");
+			if($Pref::Server::FASTKarts::RoundLimit > 0)
+				messageAll('', "\c5Beginning round " @ $FK::ResetCount @ " of " @ $Pref::Server::FASTKarts::RoundLimit @ ".");
 			else
 				messageAll('', "\c5Beginning round.");
 			messageAll('', $FK::RoundName);
@@ -473,9 +419,219 @@ package GameModeFASTKartsPackage
 				%player.tool[4] = %weapon4;
 				messageClient(%this, 'MsgItemPickup', '', 4, %weapon4);
 				
+				//make sure players aren't insta-killed when the race starts
+				if($Pref::Server::FASTKarts::NoKartKillTime > 0)
+					%player.noKartKillTime = $Pref::Server::FASTKarts::NoKartKillTime * 10;
+				
 				%this.setScore();
 			}
 		}
+	}
+	
+	function serverCmdmessageSent(%client, %text)
+	{
+		//repeat check
+		%trimText = trim(%text);
+		if(%client.lastChatText $= %trimText)
+		{
+			%chatDelta = (getSimTime() - %client.lastChatTime) / getTimeScale();
+			if(%chatDelta < 15000.0)
+			{
+				%client.spamMessageCount = $SPAM_MESSAGE_THRESHOLD;
+				messageClient(%client, '', '\c5Do not repeat yourself.');
+			}
+		}
+		%client.lastChatTime = getSimTime();
+		%client.lastChatText = %trimText;
+		
+		//player talk animation
+		%player = %client.Player;
+		if(isObject(%player))
+		{
+			%player.playThread(3, talk);
+			%player.schedule(strlen(%text) * 50.0, playThread, 3, root);
+		}
+		
+		//text filtering
+		%text = chatWhiteListFilter(%text);
+		%text = StripMLControlChars(%text);
+		%text = trim(%text);
+		if(strlen(%text) <= 0.0)
+			return;
+		if($Pref::Server::MaxChatLen > 0.0)
+		{
+			if(strlen(%text) >= $Pref::Server::MaxChatLen)
+				%text = getSubStr(%text, 0, $Pref::Server::MaxChatLen);
+		}
+		
+		//links
+		%protocol = "http://";
+		%protocolLen = strlen(%protocol);
+		%urlStart = strpos(%text, %protocol);
+		if(%urlStart == -1.0)
+		{
+			%protocol = "https://";
+			%protocolLen = strlen(%protocol);
+			%urlStart = strpos(%text, %protocol);
+		}
+		if(%urlStart == -1.0)
+		{
+			%protocol = "ftp://";
+			%protocolLen = strlen(%protocol);
+			%urlStart = strpos(%text, %protocol);
+		}
+		if(%urlStart != -1.0)
+		{
+			%urlEnd = strpos(%text, " ", %urlStart + 1.0);
+			%skipProtocol = 0;
+			if(%protocol $= "http://")
+				%skipProtocol = 1;
+			if(%urlEnd == -1.0)
+			{
+				%fullUrl = getSubStr(%text, %urlStart, strlen(%text) - %urlStart);
+				%url = getSubStr(%text, %urlStart + %protocolLen, strlen(%text) - %urlStart - %protocolLen);
+			}
+			else
+			{
+				%fullUrl = getSubStr(%text, %urlStart, %urlEnd - %urlStart);
+				%url = getSubStr(%text, %urlStart + %protocolLen, %urlEnd - %urlStart - %protocolLen);
+			}
+			if(strlen(%url) > 0.0)
+			{
+				%url = strreplace(%url, "<", "");
+				%url = strreplace(%url, ">", "");
+				if (%skipProtocol)
+					%newText = strreplace(%text, %fullUrl, "<a:" @ %url @ ">" @ %url @ "</a>\c6");
+				else
+					%newText = strreplace(%text, %fullUrl, "<a:" @ %protocol @ %url @ ">" @ %url @ "</a>\c6");
+				%text = %newText;
+			}
+		}
+		
+		//etard
+		if($Pref::Server::ETardFilter)
+		{
+			if(!chatFilter(%client, %text, $Pref::Server::ETardList, '\c5This is a civilized game.  Please use full words.'))
+				return;
+		}
+		
+		//get round color
+		if(%client.DMTeam > 0)
+			%color = FK_getRoundColorString();
+		else
+			%color = "\c3";
+		
+		//chat emotes compatability
+		if(isFunction(peReplace))
+			%text = peReplace(%text, "\c6");
+		
+		//send the message
+		chatMessageAll(%client, '\c7%1%2%3\c7%4\c6: %5', %client.clanPrefix, %color, %client.getPlayerName(), %client.clanSuffix, %text);
+		echo(%client.getSimpleName() @ ": " @ %text);
+	}
+	
+	function serverCmdTeamMessageSent(%client, %text)
+	{
+		//there are no teams in fastkarts, so we simply copy the normal chat but make it blue! amazing!
+		
+		//repeat check
+		%trimText = trim(%text);
+		if(%client.lastChatText $= %trimText)
+		{
+			%chatDelta = (getSimTime() - %client.lastChatTime) / getTimeScale();
+			if(%chatDelta < 15000.0)
+			{
+				%client.spamMessageCount = $SPAM_MESSAGE_THRESHOLD;
+				messageClient(%client, '', '\c5Do not repeat yourself.');
+			}
+		}
+		%client.lastChatTime = getSimTime();
+		%client.lastChatText = %trimText;
+		
+		//player talk animation
+		%player = %client.Player;
+		if(isObject(%player))
+		{
+			%player.playThread(3, talk);
+			%player.schedule(strlen(%text) * 50.0, playThread, 3, root);
+		}
+		
+		//text filtering
+		%text = chatWhiteListFilter(%text);
+		%text = StripMLControlChars(%text);
+		%text = trim(%text);
+		if(strlen(%text) <= 0.0)
+			return;
+		if($Pref::Server::MaxChatLen > 0.0)
+		{
+			if(strlen(%text) >= $Pref::Server::MaxChatLen)
+				%text = getSubStr(%text, 0, $Pref::Server::MaxChatLen);
+		}
+		
+		//links
+		%protocol = "http://";
+		%protocolLen = strlen(%protocol);
+		%urlStart = strpos(%text, %protocol);
+		if(%urlStart == -1.0)
+		{
+			%protocol = "https://";
+			%protocolLen = strlen(%protocol);
+			%urlStart = strpos(%text, %protocol);
+		}
+		if(%urlStart == -1.0)
+		{
+			%protocol = "ftp://";
+			%protocolLen = strlen(%protocol);
+			%urlStart = strpos(%text, %protocol);
+		}
+		if(%urlStart != -1.0)
+		{
+			%urlEnd = strpos(%text, " ", %urlStart + 1.0);
+			%skipProtocol = 0;
+			if(%protocol $= "http://")
+				%skipProtocol = 1;
+			if(%urlEnd == -1.0)
+			{
+				%fullUrl = getSubStr(%text, %urlStart, strlen(%text) - %urlStart);
+				%url = getSubStr(%text, %urlStart + %protocolLen, strlen(%text) - %urlStart - %protocolLen);
+			}
+			else
+			{
+				%fullUrl = getSubStr(%text, %urlStart, %urlEnd - %urlStart);
+				%url = getSubStr(%text, %urlStart + %protocolLen, %urlEnd - %urlStart - %protocolLen);
+			}
+			if(strlen(%url) > 0.0)
+			{
+				%url = strreplace(%url, "<", "");
+				%url = strreplace(%url, ">", "");
+				if (%skipProtocol)
+					%newText = strreplace(%text, %fullUrl, "<a:" @ %url @ ">" @ %url @ "</a>\c6");
+				else
+					%newText = strreplace(%text, %fullUrl, "<a:" @ %protocol @ %url @ ">" @ %url @ "</a>\c6");
+				%text = %newText;
+			}
+		}
+		
+		//etard
+		if($Pref::Server::ETardFilter)
+		{
+			if(!chatFilter(%client, %text, $Pref::Server::ETardList, '\c5This is a civilized game.  Please use full words.'))
+				return;
+		}
+		
+		//get round color
+		if(%client.DMTeam > 0)
+			%color = FK_getRoundColorString();
+		else
+			%color = "\c3";
+		
+		//chat emotes compatability
+		if(isFunction(peReplace))
+			%text = peReplace(%text, "\c4");
+		
+		//send the message
+		chatMessageAll(%client, '\c7%1%2%3\c7%4\c4: %5', %client.clanPrefix, %color, %client.getPlayerName(), %client.clanSuffix, %text);
+		echo("(T) " @ %client.getSimpleName() @ ": " @ %text);
 	}
 	
 	function fxDTSBrick::onPlayerEnterBrick(%this, %obj)
@@ -488,7 +644,7 @@ package GameModeFASTKartsPackage
 		
 		if(%this.checkHasOnWinRaceEvent())
 		{
-			if($FK::RoundType $= "BOUNCY" || $FK::Pref::Gameplay::VehiclelessWins)
+			if($FK::RoundType $= "BOUNCY" || $Pref::Server::FASTKarts::VehiclelessWins)
 			{
 				%obj.FK_ThisIsAPlayerNotAVehicle = true;
 				%this.onVehicleEnterBrick(%obj); //very very very hacky trickery
@@ -585,15 +741,3 @@ package GameModeFASTKartsPackage
 	}
 };
 activatePackage(GameModeFASTKartsPackage);
-
-//loaded when support_preferences is detected
-package GameModeFASTKartsSupportPreferencesPackage
-{
-	function serverCmdUpdatePref(%client, %varname, %newvalue, %announce)
-	{
-		Parent::serverCmdUpdatePref(%client, %varname, %newvalue, %announce);
-		
-		if(strPos(%varname, "$FK::Pref::") >= 0)
-			export("$FK::Pref::*", "config/server/FASTKarts/prefs.cs");
-	}
-};

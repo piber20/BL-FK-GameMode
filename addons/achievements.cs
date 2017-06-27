@@ -21,7 +21,7 @@ function sendLockedAchievementToClient(%client, %bitmapImage, %name, %text, %cat
 
 function unlockClientAchievement(%client, %name)
 {
-	if(!$FK::Pref::Gameplay::Achievements)
+	if(!$Pref::Server::FASTKarts::Achievements)
 		return;
 	
 	if(!isObject(%client))
@@ -88,7 +88,7 @@ package AchClientEnterGame
 	{
 		Parent::onClientEnterGame(%this);
 		
-		if($FK::Pref::Gameplay::Achievements)
+		if($Pref::Server::FASTKarts::Achievements)
 		{
 			if(%client.hasAchievementsMod)
 				messageClient(%this, '', "\c3This gamemode has achievements that are compatable with your achievement mod's interface.");

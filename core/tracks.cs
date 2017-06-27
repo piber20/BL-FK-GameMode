@@ -19,7 +19,7 @@ function FK_NextTrack()
 	echo("Loading next track...");
 	$FK::ResetCount = 0;
 	
-	if(($FK::Pref::Tracks::LoadRandomly && !$FK::BypassRandom) || $FK::ForceRandom)
+	if(($Pref::Server::FASTKarts::RandomTracks && !$FK::BypassRandom) || $FK::ForceRandom)
 	{
 		%i = getRandom(1, $FK::numTracks);
 

@@ -348,15 +348,15 @@ package goreDie
 			return;
 		}
 		
-		if($FK::Pref::Gameplay::PGDieEffects)
+		if($Pref::Server::FASTKarts::PGDieEffects)
 			%obj.spawnExplosion(injureProjectile,"0.7 0.7 0.7"); //not sure of arguments :V
 		
 		Parent::damage(%this, %obj, %sourceObject, %position, %damage, %damageType);
 	
-		if($FK::Pref::Gameplay::PGDieEffects)
+		if($Pref::Server::FASTKarts::PGDieEffects)
 			serverPlay3D(injureHit1Sound,%obj.getPosition());
 		
-		if($FK::Pref::Gameplay::PGDieSounds)
+		if($Pref::Server::FASTKarts::PGDieSounds)
 		{
 			%sound = getRandom(1, 50);
 			switch(%sound)
@@ -392,11 +392,11 @@ package goreDie
 			return;
 		}
 		
-		if($FK::Pref::Gameplay::PGDieEffects)
+		if($Pref::Server::FASTKarts::PGDieEffects)
 			%obj.spawnExplosion(injureProjectile,"1 1 1"); //not sure of arguments :V
 		
 		%model = fileName(%this.shapeFile);
-		if($FK::Pref::Gameplay::PGDieEffects)
+		if($Pref::Server::FASTKarts::PGDieEffects)
 		{
 			if(%model $= "m.dts")
 				%obj.changeDataBlock(PlayerCrumbleDeath);
@@ -404,7 +404,7 @@ package goreDie
 		
 		Parent::onDisabled(%this, %obj, %enabled);
 		
-		if($FK::Pref::Gameplay::CrumbleDeath)
+		if($Pref::Server::FASTKarts::CrumbleDeath)
 		{
 			if(%model !$= "m.dts" || %obj.type $= "DeathLimb")
 				return;
@@ -422,18 +422,18 @@ package goreDie
 			return;
 		}
 		
-		if(!$FK::Pref::Gameplay::007Yells)
+		if(!$Pref::Server::FASTKarts::RandomDeathYells)
 			Parent::playDeathCry(%obj);
 		
 		if(%obj.type !$= "DeathLimb")
 		{
-			if($FK::Pref::Gameplay::007Yells)
+			if($Pref::Server::FASTKarts::RandomDeathYells)
 			{
 				%r = getRandom(1, 39);
 				serverplay3d("scream" @ %r, %obj.getPosition());
 			}
 			
-			if($FK::Pref::Gameplay::PGDieSounds)
+			if($Pref::Server::FASTKarts::PGDieSounds)
 			{
 				%sound = getRandom(1, 20);
 				switch(%sound)

@@ -252,7 +252,7 @@ datablock WheeledVehicleSpring(SpeedKartDefaultSpring : SpeedKartSpring)
 /////////////
 // Vehicle //
 /////////////
-if($FK::Pref::Karts::UpDownLeaning)
+if($Pref::Server::FASTKarts::BackForwardLeaning)
 {
 	$FK::lookUpLimit = 0.6;
 	$FK::lookDownLimit = 0.48;
@@ -1067,7 +1067,7 @@ function speedCheck(%this, %obj)
 	if(!isObject(%obj))
 		return;
 
-	if(!$FK::Pref::Karts::EngineSounds)
+	if(!$Pref::Server::FASTKarts::EngineSounds)
 	{
 		%obj.stopAudio(3);
 		return;
@@ -1399,7 +1399,7 @@ package hornPackage
 {
 	function armor::onTrigger(%db,%obj,%slot,%val)
 	{
-		if(!$FK::Pref::Karts::HornSounds)
+		if(!$Pref::Server::FASTKarts::HornSounds)
 			return Parent::onTrigger(%db,%obj,%slot,%val);
 		
 		if(%obj.getClassName()$="Player")
@@ -1410,7 +1410,7 @@ package hornPackage
 				{ 
 					if(%val)
 					{
-						if(getSimTime() < (%obj.lastHornClick + $FK::Pref::Karts::HornMS))
+						if(getSimTime() < (%obj.lastHornClick + $Pref::Server::FASTKarts::HornMS))
 							return;
 						
 						%obj.playHornNoise();

@@ -51,7 +51,7 @@ function GameConnection::winRace(%client, %laps)
 		if($FK::RoundType $= "BOUNCY")
 			%bypass = true;
 		
-		if($FK::Pref::Gameplay::VehiclelessWins && %client.FASTKartsLap == %laps)
+		if($Pref::Server::FASTKarts::VehiclelessWins && %client.FASTKartsLap == %laps)
 			%bypass = true;
 	}
 	
@@ -145,7 +145,7 @@ function FK_getTimeLeft(%mg, %win)
 	if(%win)
 		$FK::WinnerTime = %elapsedTime;
 	
-	if(%win && $FK::Pref::Gameplay::ShowFullTime)
+	if(%win && $Pref::Server::FASTKarts::ShowMilliseconds)
 		%string = FK_getFullTimeString(%elapsedTime);
 	else
 	{
@@ -208,9 +208,9 @@ function FK_doTimeRecord(%mg)
 	
 	if(%newRecord)
 	{
-		if($FK::Pref::Gameplay::AnnounceRecords)
+		if($Pref::Server::FASTKarts::AnnounceRecords)
 		{
-			if($FK::Pref::Gameplay::ShowFullTime)
+			if($Pref::Server::FASTKarts::ShowMilliseconds)
 				%string = FK_getFullTimeString(%oldRecord);
 			else
 			{
@@ -254,22 +254,22 @@ function FK_doTimeRecord(%mg)
 function FK_DetermineRoundType()
 {
 	if(FK_getRoundTypesAllowed() == 0)
-		$FK::Pref::Rounds::AllowNormal = true;
+		$Pref::Server::FASTKarts::NormalRounds = true;
 	
 	if(FK_getRoundTypesAllowed() > 1)
 	{
 		//force the round to be normal if it wasnt normal before
-		if($FK::RoundType !$= "NORMAL" && $FK::Pref::Rounds::AllowNormal)
+		if($FK::RoundType !$= "NORMAL" && $Pref::Server::FASTKarts::NormalRounds)
 			%random = 0;
 		else //determine what the randomiser can pick
 			%random = getRandom(0, FK_getRoundTypesAllowed() - 1);
 		
 		%types = -1;
-		if($FK::Pref::Rounds::AllowNormal)
+		if($Pref::Server::FASTKarts::NormalRounds)
 			%round[%types++] = 0;
-		if($FK::Pref::Rounds::AllowRocket)
+		if($Pref::Server::FASTKarts::RocketRounds)
 			%round[%types++] = 1;
-		if($FK::Pref::Rounds::AllowBouncy)
+		if($Pref::Server::FASTKarts::BouncyRounds)
 			%round[%types++] = 2;
 		
 		//apply the round type
@@ -282,11 +282,11 @@ function FK_DetermineRoundType()
 	}
 	else
 	{
-		if($FK::Pref::Rounds::AllowNormal)
+		if($Pref::Server::FASTKarts::NormalRounds)
 			$FK::RoundType = "NORMAL";
-		else if($FK::Pref::Rounds::AllowRocket)
+		else if($Pref::Server::FASTKarts::RocketRounds)
 			$FK::RoundType = "ROCKET";
-		else if($FK::Pref::Rounds::AllowBouncy)
+		else if($Pref::Server::FASTKarts::BouncyRounds)
 			$FK::RoundType = "BOUNCY";
 	}
 	
@@ -315,7 +315,7 @@ function FK_DetermineRoundType()
 
 function FK_getRoundTypesAllowed()
 {
-	%types = $FK::Pref::Rounds::AllowNormal + $FK::Pref::Rounds::AllowRocket + $FK::Pref::Rounds::AllowBouncy;
+	%types = $Pref::Server::FASTKarts::NormalRounds + $Pref::Server::FASTKarts::RocketRounds + $Pref::Server::FASTKarts::BouncyRounds;
 	return %types;
 }
 

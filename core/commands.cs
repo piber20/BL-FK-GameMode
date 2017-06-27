@@ -9,14 +9,14 @@ function serverCmdSetRound(%client, %i)
 		return;
 	}
 	
-	if($FK::Pref::Rounds::PerTrack <= 0)
+	if($Pref::Server::FASTKarts::RoundLimit <= 0)
 	{
 		messageClient(%client, '', "Track rotation is off. Setting the round will do nothing.");
 		return;
 	}
 	
-	if(%i > $FK::Pref::Rounds::PerTrack)
-		%i = $FK::Pref::Rounds::PerTrack;
+	if(%i > $Pref::Server::FASTKarts::RoundLimit)
+		%i = $Pref::Server::FASTKarts::RoundLimit;
 	
 	for(%aaa = 0; %aaa < $DefaultMinigame.numMembers; %aaa++)
 	{
@@ -43,7 +43,7 @@ function serverCmdNextRound(%client)
 		return;
 	
 	messageAll('MsgAdminForce', '\c3%1\c2 skipped the round.', %client.getPlayerName());
-	if($FK::ResetCount >= $FK::Pref::Rounds::PerTrack && $FK::Pref::Rounds::PerTrack > 0)
+	if($FK::ResetCount >= $Pref::Server::FASTKarts::RoundLimit && $Pref::Server::FASTKarts::RoundLimit > 0)
 	{
 		serverCmdNextTrack(%client);
 		return;
@@ -153,7 +153,7 @@ function serverCmdRandomMap(%client)
 //TRACK VOTING COMMANDS
 function serverCmdVoteTrack(%client, %i)
 {
-	if($FK::Pref::Tracks::Voting $= 0)
+	if($Pref::Server::FASTKarts::EnableTrackVoting $= 0)
 	{
 		messageClient(%client, '', "Track voting is disabled.");
 		return;
@@ -272,7 +272,7 @@ function FK_CheckVotes()
 	}
 	
 	%sub = $DefaultMinigame.numMembers * 0.7;
-	if(%rockers >= %sub && $FK::Pref::Tracks::Voting !$= 2)
+	if(%rockers >= %sub && $Pref::Server::FASTKarts::EnableTrackVoting !$= 2)
 	{
 		echo("Votes resulted in the track changing immediately.");
 		messageAll('MsgAdminForce', '\c2Enough people rocked the vote that the track will change \c3right now\c2!');

@@ -2,220 +2,330 @@ if($GameModeArg !$= "Add-Ons/GameMode_FASTKarts/gamemode.txt" )
 {
 	warn("GameMode_FASTKarts cannot be used in custom games");
 	warn("We'll just load the karts instead...");
-	exec("config/server/FASTKarts/prefs.cs");
 	exec("./addons/karts/Karts.cs");
 	return;
 }
 
-function FK_SystemPrefs()
-{
-	$FK::Pref::System::Version = 7.2;
-	$FK::Pref::System::Format = 2;
-}
-
-function FK_SetDefaultPrefs()
-{
-	echo("=== Applying default FASTKarts prefs ===");
-	$FK::Pref::Rounds::PerTrack = 6;
-	$FK::Pref::Rounds::AllowNormal = true;
-	$FK::Pref::Rounds::AllowRocket = false;
-	$FK::Pref::Rounds::AllowBouncy = false;
-	
-	$FK::Pref::Tracks::LoadRandomly = false;
-	$FK::Pref::Tracks::Voting = 1;
-	
-	$FK::Pref::Tips::TipSeconds = 60;
-	
-	$FK::Pref::Gameplay::Achievements = true;
-	$FK::Pref::Gameplay::CrumbleDeath = true;
-	$FK::Pref::Gameplay::PGDieEffects = true;
-	$FK::Pref::Gameplay::PGDieSounds = true;
-	$FK::Pref::Gameplay::007Yells = true;
-	$FK::Pref::Gameplay::VehiclelessWins = false;
-	$FK::Pref::Gameplay::AnnounceRecords = false;
-	$FK::Pref::Gameplay::ShowFullTime = false;
-	
-	$FK::Pref::Karts::AllowSpeedKart = true;
-	$FK::Pref::Karts::Allow64 = true;
-	$FK::Pref::Karts::Allow7 = true;
-	$FK::Pref::Karts::AllowBlocko = true;
-	$FK::Pref::Karts::AllowBuggy = true;
-	$FK::Pref::Karts::AllowClassic = true;
-	$FK::Pref::Karts::AllowClassicGT = true;
-	$FK::Pref::Karts::AllowFormula = true;
-	$FK::Pref::Karts::AllowHotrod = true;
-	$FK::Pref::Karts::AllowHyperion = true;
-	$FK::Pref::Karts::AllowJeep = true;
-	$FK::Pref::Karts::AllowLeMans = true;
-	$FK::Pref::Karts::AllowMuscle = true;
-	$FK::Pref::Karts::AllowVintage = true;
-	$FK::Pref::Karts::AllowHover = true;
-	$FK::Pref::Karts::AllowOriginal = true;
-	$FK::Pref::Karts::AllowDefault = true;
-	$FK::Pref::Karts::AllowSuperKart = true;
-	$FK::Pref::Karts::AllowSuperATV = true;
-	$FK::Pref::Karts::AllowSuperHover = true;
-	$FK::Pref::Karts::AllowSuperJetski = true;
-	$FK::Pref::Karts::AllowSuperPlane = true;
-	$FK::Pref::Karts::HornSounds = true;
-	$FK::Pref::Karts::HornMS = 50;
-	$FK::Pref::Karts::EngineSounds = true;
-	$FK::Pref::Karts::UpDownLeaning = false;
-	$FK::Pref::Karts::OldNames = false;
-	$FK::Pref::Karts::ForceDefault = false;
-	
-	$FK::Pref::Administration::HideCommands = false;
-	$DM::Pref::Administration::AdminTags = true;
-	$DM::Pref::Administration::FloodProtection = true;
-	
-	$FK::Pref::Exec::Addon1 = "";
-	$FK::Pref::Exec::Addon2 = "";
-	$FK::Pref::Exec::Addon3 = "";
-	$FK::Pref::Exec::Addon4 = "";
-	$FK::Pref::Exec::Addon5 = "";
-	$FK::Pref::Exec::Addon6 = "";
-	$FK::Pref::Exec::Addon7 = "";
-	$FK::Pref::Exec::Addon8 = "";
-	$FK::Pref::Exec::Addon9 = "";
-	$FK::Pref::Exec::Addon10 = "";
-	
-	$FK::Preset::Defaults = false;
-	$FK::Preset::SpeedKart = false;
-	$FK::Preset::Everything = false;
-	echo("");
-}
-
 function FK_LoadPrefs()
 {
-	deleteVariables("$FK::Pref::*");
-	FK_SetDefaultPrefs();
-	if(isFile("config/server/FASTKarts/prefs.cs"))
-	{
-		echo("=== Loading saved FASTKarts prefs ===");
-		exec("config/server/FASTKarts/prefs.cs");
-		
-		if($FK::Pref::System::Format != 2)
-		{
-			if(mfloor($FK::Pref::System::Format) < 2)
-			{
-				if($FK::Pref::System::Format $= "")
-					warn("Saved FK prefs are in an unnumbered (probably older) format.");
-				else
-					warn("Saved FK prefs are from an older format.");
-			}
-			else if(mfloor($FK::Pref::System::Format) > 2)
-				warn("Saved FK prefs are from an unknown newer format.");
-			
-			warn("Clearing old prefs and reloading defaults...");
-			deleteVariables("$FK::Pref::*");
-			FK_SetDefaultPrefs();
-		}
-		
-		echo("");
-	}
+	//records
+	deleteVariables("$FK::Record_*");
+	exec("config/server/FASTKarts/records.cs");
 	
-	if(isFile("config/server/FASTKarts/records.cs"))
-	{
-		echo("=== Loading saved FASTKarts records ===");
-		deleteVariables("$FK::Record_*");
-		exec("config/server/FASTKarts/records.cs");
-		
-		echo("");
-	}
+	///////////////
+	//ROUND PREFS//
+	///////////////
 	
-	FK_SystemPrefs();
-	export("$FK::Pref::*", "config/server/FASTKarts/prefs.cs");
+	//rounds per map
+	if($Pref::Server::FASTKarts::RoundLimit $= "")
+		$Pref::Server::FASTKarts::RoundLimit = 6;
+	
+	//allow normal rounds
+	if($Pref::Server::FASTKarts::NormalRounds $= "")
+		$Pref::Server::FASTKarts::NormalRounds = true;
+	
+	//allow rocket rounds
+	if($Pref::Server::FASTKarts::RocketRounds $= "")
+		$Pref::Server::FASTKarts::RocketRounds = false;
+	
+	//allow bouncy rounds
+	if($Pref::Server::FASTKarts::BouncyRounds $= "")
+		$Pref::Server::FASTKarts::BouncyRounds = false;
+	
+	///////////////
+	//TRACK PREFS//
+	///////////////
+	
+	//true to load tracks in random order, false to load them in numbered order
+	if($Pref::Server::FASTKarts::RandomTracks $= "")
+		$Pref::Server::FASTKarts::RandomTracks = false;
+	
+	//allow players to vote for tracks
+	if($Pref::Server::FASTKarts::EnableTrackVoting $= "")
+		$Pref::Server::FASTKarts::EnableTrackVoting = 1;
+	
+	/////////////
+	//TIP PREFS//
+	/////////////
+	
+	//display a tip every X seconds (-1 disables)
+	if($Pref::Server::FASTKarts::TipSeconds $= "")
+		$Pref::Server::FASTKarts::TipSeconds = 60;
+	
+	//////////////////
+	//GAMEPLAY PREFS//
+	//////////////////
+	
+	//enable achievements system
+	if($Pref::Server::FASTKarts::Achievements $= "")
+		$Pref::Server::FASTKarts::Achievements = true;
+	
+	//crumble players on death
+	if($Pref::Server::FASTKarts::CrumbleDeath $= "")
+		$Pref::Server::FASTKarts::CrumbleDeath = true;
+	
+	//do special emitter effects on death
+	if($Pref::Server::FASTKarts::PGDieEffects $= "")
+		$Pref::Server::FASTKarts::PGDieEffects = true;
+	
+	//play gag sounds on death
+	if($Pref::Server::FASTKarts::PGDieSounds $= "")
+		$Pref::Server::FASTKarts::PGDieSounds = true;
+	
+	//play a random yell on death
+	if($Pref::Server::FASTKarts::RandomDeathYells $= "")
+		$Pref::Server::FASTKarts::RandomDeathYells = true;
+	
+	//allow race completion without a vehicle
+	if($Pref::Server::FASTKarts::VehiclelessWins $= "")
+		$Pref::Server::FASTKarts::VehiclelessWins = false;
+	
+	//announce in chat when a new record is set
+	if($Pref::Server::FASTKarts::AnnounceRecords $= "")
+		$Pref::Server::FASTKarts::AnnounceRecords = false;
+	
+	//show milliseconds where race time left is shown
+	if($Pref::Server::FASTKarts::ShowMilliseconds $= "")
+		$Pref::Server::FASTKarts::ShowMilliseconds = false;
+	
+	//kill a player after X seconds if they're not in a vehicle
+	if($Pref::Server::FASTKarts::NoKartKillTime $= "")
+		$Pref::Server::FASTKarts::NoKartKillTime = 20;
+	
+	//////////////
+	//KART PREFS//
+	//////////////
+	
+	//allow players to pick a speedkart
+	if($Pref::Server::FASTKarts::AllowSpeedKart $= "")
+		$Pref::Server::FASTKarts::AllowSpeedKart = true;
+	
+	//allow players to pick a speedkart 64
+	if($Pref::Server::FASTKarts::Allow64 $= "")
+		$Pref::Server::FASTKarts::Allow64 = true;
+	
+	//allow players to pick a speedkart 7
+	if($Pref::Server::FASTKarts::Allow7 $= "")
+		$Pref::Server::FASTKarts::Allow7 = true;
+	
+	//allow players to pick a speedkart blocko
+	if($Pref::Server::FASTKarts::AllowBlocko $= "")
+		$Pref::Server::FASTKarts::AllowBlocko = true;
+	
+	//allow players to pick a speedkart buggy
+	if($Pref::Server::FASTKarts::AllowBuggy $= "")
+		$Pref::Server::FASTKarts::AllowBuggy = true;
+	
+	//allow players to pick a speedkart classic
+	if($Pref::Server::FASTKarts::AllowClassic $= "")
+		$Pref::Server::FASTKarts::AllowClassic = true;
+	
+	//allow players to pick a speedkart classic gt
+	if($Pref::Server::FASTKarts::AllowClassicGT $= "")
+		$Pref::Server::FASTKarts::AllowClassicGT = true;
+	
+	//allow players to pick a speedkart formula
+	if($Pref::Server::FASTKarts::AllowFormula $= "")
+		$Pref::Server::FASTKarts::AllowFormula = true;
+	
+	//allow players to pick a speedkart hotrod
+	if($Pref::Server::FASTKarts::AllowHotrod $= "")
+		$Pref::Server::FASTKarts::AllowHotrod = true;
+	
+	//allow players to pick a speedkart hyperion
+	if($Pref::Server::FASTKarts::AllowHyperion $= "")
+		$Pref::Server::FASTKarts::AllowHyperion = true;
+	
+	//allow players to pick a speedkart jeep
+	if($Pref::Server::FASTKarts::AllowJeep $= "")
+		$Pref::Server::FASTKarts::AllowJeep = true;
+	
+	//allow players to pick a speedkart lemans
+	if($Pref::Server::FASTKarts::AllowLeMans $= "")
+		$Pref::Server::FASTKarts::AllowLeMans = true;
+	
+	//allow players to pick a speedkart muscle
+	if($Pref::Server::FASTKarts::AllowMuscle $= "")
+		$Pref::Server::FASTKarts::AllowMuscle = true;
+	
+	//allow players to pick a speedkart vintage
+	if($Pref::Server::FASTKarts::AllowVintage $= "")
+		$Pref::Server::FASTKarts::AllowVintage = true;
+	
+	//allow players to pick a speedkart hover
+	if($Pref::Server::FASTKarts::AllowHover $= "")
+		$Pref::Server::FASTKarts::AllowHover = true;
+	
+	//allow players to pick a speedkart original
+	if($Pref::Server::FASTKarts::AllowOriginal $= "")
+		$Pref::Server::FASTKarts::AllowOriginal = true;
+	
+	//allow players to pick a speedkart default
+	if($Pref::Server::FASTKarts::AllowDefault $= "")
+		$Pref::Server::FASTKarts::AllowDefault = true;
+	
+	//allow players to pick a superkart
+	if($Pref::Server::FASTKarts::AllowSuperKart $= "")
+		$Pref::Server::FASTKarts::AllowSuperKart = true;
+	
+	//allow players to pick a superkart atv
+	if($Pref::Server::FASTKarts::AllowSuperATV $= "")
+		$Pref::Server::FASTKarts::AllowSuperATV = true;
+	
+	//allow players to pick a superkart hover
+	if($Pref::Server::FASTKarts::AllowSuperHover $= "")
+		$Pref::Server::FASTKarts::AllowSuperHover = true;
+	
+	//allow players to pick a superkart jetski
+	if($Pref::Server::FASTKarts::AllowSuperJetski $= "")
+		$Pref::Server::FASTKarts::AllowSuperJetski = true;
+	
+	//allow players to pick a superkart plane
+	if($Pref::Server::FASTKarts::AllowSuperPlane $= "")
+		$Pref::Server::FASTKarts::AllowSuperPlane = true;
+	
+	//allow players to play a horn from their karts
+	if($Pref::Server::FASTKarts::HornSounds $= "")
+		$Pref::Server::FASTKarts::HornSounds = true;
+	
+	//delay between horns
+	if($Pref::Server::FASTKarts::HornMS $= "")
+		$Pref::Server::FASTKarts::HornMS = 50;
+	
+	//have karts play constant engine sounds
+	if($Pref::Server::FASTKarts::EngineSounds $= "")
+		$Pref::Server::FASTKarts::EngineSounds = true;
+	
+	//allow players to lean back and forth in their kart
+	if($Pref::Server::FASTKarts::BackForwardLeaning $= "")
+		$Pref::Server::FASTKarts::BackForwardLeaning = false;
+	
+	//use kart names that were given in older fastkarts versions
+	if($Pref::Server::FASTKarts::OldKartNames $= "")
+		$Pref::Server::FASTKarts::OldKartNames = false;
+	
+	//bypass all above kart prefs and load the default speedkart's karts instead of fastkarts' karts
+	if($Pref::Server::FASTKarts::ForceSpeedkarts $= "")
+		$Pref::Server::FASTKarts::ForceSpeedkarts = false;
+	
+	///////////////
+	//ADDON PREFS//
+	///////////////
+	
+	//addons to load after gamemode execution, only works with addons that have a server.cs, and that's executed directly.
+	if($Pref::Server::FASTKarts::LoadAddon1 $= "")
+		$Pref::Server::FASTKarts::LoadAddon1 = "";
+	
+	if($Pref::Server::FASTKarts::LoadAddon2 $= "")
+		$Pref::Server::FASTKarts::LoadAddon2 = "";
+	
+	if($Pref::Server::FASTKarts::LoadAddon3 $= "")
+		$Pref::Server::FASTKarts::LoadAddon3 = "";
+	
+	if($Pref::Server::FASTKarts::LoadAddon4 $= "")
+		$Pref::Server::FASTKarts::LoadAddon4 = "";
+	
+	if($Pref::Server::FASTKarts::LoadAddon5 $= "")
+		$Pref::Server::FASTKarts::LoadAddon5 = "";
+	
+	if($Pref::Server::FASTKarts::LoadAddon6 $= "")
+		$Pref::Server::FASTKarts::LoadAddon6 = "";
+	
+	if($Pref::Server::FASTKarts::LoadAddon7 $= "")
+		$Pref::Server::FASTKarts::LoadAddon7 = "";
+	
+	if($Pref::Server::FASTKarts::LoadAddon8 $= "")
+		$Pref::Server::FASTKarts::LoadAddon8 = "";
+	
+	if($Pref::Server::FASTKarts::LoadAddon9 $= "")
+		$Pref::Server::FASTKarts::LoadAddon9 = "";
+	
+	if($Pref::Server::FASTKarts::LoadAddon10 $= "")
+		$Pref::Server::FASTKarts::LoadAddon10 = "";
+	
+	$FK::Version = 8;
 }
 
 function FK_RegisterRTBPrefs()
 {
-	RTB_registerPref("Rounds per track (-1 disables)",			"FASTKarts - Rounds",				"$FK::Pref::Rounds::PerTrack",					"int -1 9999",							"GameMode_FASTKarts",	6,		false,	false,	false);
-	RTB_registerPref("Allow Normal round type",					"FASTKarts - Rounds",				"$FK::Pref::Rounds::AllowNormal",				"bool",									"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Allow Rocket round type",					"FASTKarts - Rounds",				"$FK::Pref::Rounds::AllowRocket",				"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Allow Bouncy round type",					"FASTKarts - Rounds",				"$FK::Pref::Rounds::AllowBouncy",				"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Rounds per track (-1 disables)",	"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::RoundLimit",		"int -1 9999",	"GameMode_FASTKarts",	6,		false,	false,	false);
+	RTB_registerPref("Allow Normal round type",			"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::NormalRounds",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow Rocket round type",			"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::RocketRounds",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Allow Bouncy round type",			"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::BouncyRounds",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
 	
-	RTB_registerPref("Load tracks in random order",				"FASTKarts - Tracks",				"$FK::Pref::Tracks::LoadRandomly",				"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Allow player track voting",				"FASTKarts - Tracks",				"$FK::Pref::Tracks::Voting",					"list Disallow 0 Allow 1 Round_Only 2",	"GameMode_FASTKarts",	1,		false,	false,	false);
+	RTB_registerPref("Load tracks in random order",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::RandomTracks",		"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Allow player track voting",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::EnableTrackVoting",	"list Disallow 0 Allow 1 Round_Only 2",	"GameMode_FASTKarts",	1,		false,	false,	false);
 	
-	RTB_registerPref("Show tip every X seconds (-1 disables)",	"FASTKarts - Tips",					"$FK::Pref::Tips::TipSeconds",					"int -1 99999",							"GameMode_FASTKarts",	60,		false,	false,	false);
+	RTB_registerPref("Show tip every X seconds (-1 disables)",	"FASTKarts - Tips",	"$Pref::Server::FASTKarts::TipSeconds",	"int -1 99999",	"GameMode_FASTKarts",	60,	false,	false,	false);
 	
-	RTB_registerPref("Enable achievements system",				"FASTKarts - Gameplay",				"$FK::Pref::Gameplay::Achievements",			"bool",									"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable crumble death effect",				"FASTKarts - Gameplay",				"$FK::Pref::Gameplay::CrumbleDeath",			"bool",									"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable PGDie death effects",				"FASTKarts - Gameplay",				"$FK::Pref::Gameplay::PGDieEffects",			"bool",									"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable PGDie death sounds",				"FASTKarts - Gameplay",				"$FK::Pref::Gameplay::PGDieSounds",				"bool",									"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable random death yells",				"FASTKarts - Gameplay",				"$FK::Pref::Gameplay::007Yells",				"bool",									"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Allow vehicleless race completions",		"FASTKarts - Gameplay",				"$FK::Pref::Gameplay::VehiclelessWins",			"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Announce new records",					"FASTKarts - Gameplay",				"$FK::Pref::Gameplay::AnnounceRecords",			"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Show full time on race completion",		"FASTKarts - Gameplay",				"$FK::Pref::Gameplay::ShowFullTime",			"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Enable achievements system",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::Achievements",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable crumble death effect",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::CrumbleDeath",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable PGDie death effects",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::PGDieEffects",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable PGDie death sounds",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::PGDieSounds",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable random death yells",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::RandomDeathYells",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow vehicleless race completions",					"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::VehiclelessWins",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Announce new records",								"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::AnnounceRecords",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Show full time on race completion",					"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::ShowMilliseconds",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Kill kartless players after X seconds (-1 disables)",	"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::NoKartKillTime",		"int -1 99999",	"GameMode_FASTKarts",	30,		false,	false,	false);
 	
-	RTB_registerPref("Allow SpeedKart",							"FASTKarts - Karts",				"$FK::Pref::Karts::AllowSpeedKart",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart 64",						"FASTKarts - Karts",				"$FK::Pref::Karts::Allow64",					"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart 7",						"FASTKarts - Karts",				"$FK::Pref::Karts::Allow7",						"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Blocko",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowBlocko",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Buggy",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowBuggy",					"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Classic",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowClassic",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Classic GT",				"FASTKarts - Karts",				"$FK::Pref::Karts::AllowClassicGT",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Formula",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowFormula",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Hotrod",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowHotrod",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Hyperion",				"FASTKarts - Karts",				"$FK::Pref::Karts::AllowHyperion",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Jeep",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowJeep",					"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart LeMans",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowLeMans",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Muscle",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowMuscle",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Vintage",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowVintage",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Hover",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowHover",					"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Original",				"FASTKarts - Karts",				"$FK::Pref::Karts::AllowOriginal",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	RTB_registerPref("Allow SpeedKart Default",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowDefault",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-	if($FK::Pref::Karts::OldNames)
+	RTB_registerPref("Allow SpeedKart",						"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowSpeedKart",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart 64",					"FASTKarts - Karts",	"$Pref::Server::FASTKarts::Allow64",			"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart 7",					"FASTKarts - Karts",	"$Pref::Server::FASTKarts::Allow7",				"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Blocko",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowBlocko",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Buggy",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowBuggy",			"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Classic",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowClassic",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Classic GT",			"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowClassicGT",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Formula",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowFormula",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Hotrod",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowHotrod",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Hyperion",			"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowHyperion",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Jeep",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowJeep",			"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart LeMans",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowLeMans",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Muscle",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowMuscle",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Vintage",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowVintage",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Hover",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowHover",			"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Original",			"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowOriginal",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	RTB_registerPref("Allow SpeedKart Default",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowDefault",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+	if($Pref::Server::FASTKarts::OldKartNames)
 	{
-		RTB_registerPref("Allow SpeedKart II",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowSuperKart",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-		RTB_registerPref("Allow SpeedKart ATV",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowSuperATV",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-		RTB_registerPref("Allow SpeedKart Hover II",			"FASTKarts - Karts",				"$FK::Pref::Karts::AllowSuperHover",			"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-		RTB_registerPref("Allow SpeedKart Jetski",				"FASTKarts - Karts",				"$FK::Pref::Karts::AllowSuperJetski",			"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-		RTB_registerPref("Allow SpeedKart Plane",				"FASTKarts - Karts",				"$FK::Pref::Karts::AllowSuperPlane",			"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
+		RTB_registerPref("Allow SpeedKart II",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowSuperKart",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+		RTB_registerPref("Allow SpeedKart ATV",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowSuperATV",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+		RTB_registerPref("Allow SpeedKart Hover II",		"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowSuperHover",	"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+		RTB_registerPref("Allow SpeedKart Jetski",			"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowSuperJetski",	"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+		RTB_registerPref("Allow SpeedKart Plane",			"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowSuperPlane",	"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
 	}
 	else
 	{
-		RTB_registerPref("Allow SuperKart",						"FASTKarts - Karts",				"$FK::Pref::Karts::AllowSuperKart",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-		RTB_registerPref("Allow SuperKart ATV",					"FASTKarts - Karts",				"$FK::Pref::Karts::AllowSuperATV",				"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-		RTB_registerPref("Allow SuperKart Hover",				"FASTKarts - Karts",				"$FK::Pref::Karts::AllowSuperHover",			"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-		RTB_registerPref("Allow SuperKart Jetski",				"FASTKarts - Karts",				"$FK::Pref::Karts::AllowSuperJetski",			"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
-		RTB_registerPref("Allow SuperKart Plane",				"FASTKarts - Karts",				"$FK::Pref::Karts::AllowSuperPlane",			"bool",									"GameMode_FASTKarts",	true,	true,	false,	false);
+		RTB_registerPref("Allow SuperKart",					"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowSuperKart",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+		RTB_registerPref("Allow SuperKart ATV",				"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowSuperATV",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+		RTB_registerPref("Allow SuperKart Hover",			"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowSuperHover",	"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+		RTB_registerPref("Allow SuperKart Jetski",			"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowSuperJetski",	"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
+		RTB_registerPref("Allow SuperKart Plane",			"FASTKarts - Karts",	"$Pref::Server::FASTKarts::AllowSuperPlane",	"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
 	}
-	RTB_registerPref("Horn Sounds",								"FASTKarts - Karts",				"$FK::Pref::Karts::HornSounds",					"bool",									"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Horn Delay",								"FASTKarts - Karts",				"$FK::Pref::Karts::HornMS",						"int 0 9999",							"GameMode_FASTKarts",	50,		false,	false,	false);
-	RTB_registerPref("Engine Sounds",							"FASTKarts - Karts",				"$FK::Pref::Karts::EngineSounds",				"bool",									"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Back and Forward leaning in karts",		"FASTKarts - Karts",				"$FK::Pref::Karts::UpDownLeaning",				"bool",									"GameMode_FASTKarts",	false,	true,	false,	false);
-	RTB_registerPref("Use Old Names",							"FASTKarts - Karts",				"$FK::Pref::Karts::OldNames",					"bool",									"GameMode_FASTKarts",	false,	true,	false,	false);
-	RTB_registerPref("Force default SpeedKarts",				"FASTKarts - Karts",				"$FK::Pref::Karts::ForceDefault",				"bool",									"GameMode_FASTKarts",	false,	true,	false,	false);
+	RTB_registerPref("Horn Sounds",							"FASTKarts - Karts",	"$Pref::Server::FASTKarts::HornSounds",			"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Horn Delay",							"FASTKarts - Karts",	"$Pref::Server::FASTKarts::HornMS",				"int 0 9999",	"GameMode_FASTKarts",	50,		false,	false,	false);
+	RTB_registerPref("Engine Sounds",						"FASTKarts - Karts",	"$Pref::Server::FASTKarts::EngineSounds",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Back and Forward leaning in karts",	"FASTKarts - Karts",	"$Pref::Server::FASTKarts::BackForwardLeaning",	"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
+	RTB_registerPref("Use Old Names",						"FASTKarts - Karts",	"$Pref::Server::FASTKarts::OldKartNames",		"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
+	RTB_registerPref("Force default SpeedKarts",			"FASTKarts - Karts",	"$Pref::Server::FASTKarts::ForceSpeedkarts",	"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
 	
-	RTB_registerPref("Hide admin command lists",				"FASTKarts - Administration",		"$FK::Pref::Administration::HideCommands",		"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Give admins special clan tags",			"FASTKarts - Administration",		"$FK::Pref::Administration::AdminTags",			"bool",									"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable chat flood protection",			"FASTKarts - Administration",		"$FK::Pref::Administration::FloodProtection",	"bool",									"GameMode_FASTKarts",	true,	false,	false,	false);
-	
-	RTB_registerPref("Defaults (WARNING: resets everything!)",	"FASTKarts - Presets",				"$FK::Preset::Defaults",						"bool",									"GameMode_FASTKarts",	false,	true,	false,	false);
-	RTB_registerPref("I <3 SpeedKart",							"FASTKarts - Presets",				"$FK::Preset::SpeedKart",						"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Give me everything.",						"FASTKarts - Presets",				"$FK::Preset::Everything",						"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
-	
-	RTB_registerPref("First add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon1",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Second add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon2",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Third add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon3",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Fourth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon4",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Fifth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon5",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Sixth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon6",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Seventh add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon7",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Eighth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon8",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Ninth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon9",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
-	RTB_registerPref("Tenth add-on to load",					"FASTKarts - AddOns",				"$FK::Pref::Exec::Addon10",						"string 200",							"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("First add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon1",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
+	RTB_registerPref("Second add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon2",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
+	RTB_registerPref("Third add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon3",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
+	RTB_registerPref("Fourth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon4",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
+	RTB_registerPref("Fifth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon5",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
+	RTB_registerPref("Sixth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon6",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
+	RTB_registerPref("Seventh add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon7",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
+	RTB_registerPref("Eighth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon8",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
+	RTB_registerPref("Ninth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon9",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
+	RTB_registerPref("Tenth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon10",	"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
 }
 
 if(!$FK::Initialized)
 {
 	echo("Starting up FASTKarts Gamemode...");
-	FK_SystemPrefs();
-	echo("Version: " @ $FK::Pref::System::Version);
-	echo("Pref Format: " @ $FK::Pref::System::Format);
-	echo("");
 	FK_LoadPrefs();
+	echo("Version: " @ $FK::Version);
+	echo("");
 	
 	echo("=== Executing add-ons manually that the host might have ===");
 	
@@ -245,35 +355,35 @@ if(!$FK::Initialized)
 {
 	echo("=== Executing add-ons that the host wanted ===");
 	
-	if($FK::Pref::Exec::Addon1 !$= "" && isFile("Add-Ons/" @ $FK::Pref::Exec::Addon1 @ "/server.cs"))
-		exec("Add-Ons/" @ $FK::Pref::Exec::Addon1 @ "/server.cs");
+	if($Pref::Server::FASTKarts::LoadAddon1 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon1 @ "/server.cs"))
+		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon1 @ "/server.cs");
 	
-	if($FK::Pref::Exec::Addon2 !$= "" && isFile("Add-Ons/" @ $FK::Pref::Exec::Addon2 @ "/server.cs"))
-		exec("Add-Ons/" @ $FK::Pref::Exec::Addon2 @ "/server.cs");
+	if($Pref::Server::FASTKarts::LoadAddon2 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon2 @ "/server.cs"))
+		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon2 @ "/server.cs");
 	
-	if($FK::Pref::Exec::Addon3 !$= "" && isFile("Add-Ons/" @ $FK::Pref::Exec::Addon3 @ "/server.cs"))
-		exec("Add-Ons/" @ $FK::Pref::Exec::Addon3 @ "/server.cs");
+	if($Pref::Server::FASTKarts::LoadAddon3 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon3 @ "/server.cs"))
+		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon3 @ "/server.cs");
 	
-	if($FK::Pref::Exec::Addon4 !$= "" && isFile("Add-Ons/" @ $FK::Pref::Exec::Addon4 @ "/server.cs"))
-		exec("Add-Ons/" @ $FK::Pref::Exec::Addon4 @ "/server.cs");
+	if($Pref::Server::FASTKarts::LoadAddon4 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon4 @ "/server.cs"))
+		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon4 @ "/server.cs");
 	
-	if($FK::Pref::Exec::Addon5 !$= "" && isFile("Add-Ons/" @ $FK::Pref::Exec::Addon5 @ "/server.cs"))
-		exec("Add-Ons/" @ $FK::Pref::Exec::Addon5 @ "/server.cs");
+	if($Pref::Server::FASTKarts::LoadAddon5 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon5 @ "/server.cs"))
+		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon5 @ "/server.cs");
 	
-	if($FK::Pref::Exec::Addon6 !$= "" && isFile("Add-Ons/" @ $FK::Pref::Exec::Addon6 @ "/server.cs"))
-		exec("Add-Ons/" @ $FK::Pref::Exec::Addon6 @ "/server.cs");
+	if($Pref::Server::FASTKarts::LoadAddon6 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon6 @ "/server.cs"))
+		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon6 @ "/server.cs");
 	
-	if($FK::Pref::Exec::Addon7 !$= "" && isFile("Add-Ons/" @ $FK::Pref::Exec::Addon7 @ "/server.cs"))
-		exec("Add-Ons/" @ $FK::Pref::Exec::Addon7 @ "/server.cs");
+	if($Pref::Server::FASTKarts::LoadAddon7 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon7 @ "/server.cs"))
+		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon7 @ "/server.cs");
 	
-	if($FK::Pref::Exec::Addon8 !$= "" && isFile("Add-Ons/" @ $FK::Pref::Exec::Addon8 @ "/server.cs"))
-		exec("Add-Ons/" @ $FK::Pref::Exec::Addon8 @ "/server.cs");
+	if($Pref::Server::FASTKarts::LoadAddon8 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon8 @ "/server.cs"))
+		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon8 @ "/server.cs");
 	
-	if($FK::Pref::Exec::Addon9 !$= "" && isFile("Add-Ons/" @ $FK::Pref::Exec::Addon9 @ "/server.cs"))
-		exec("Add-Ons/" @ $FK::Pref::Exec::Addon9 @ "/server.cs");
+	if($Pref::Server::FASTKarts::LoadAddon9 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon9 @ "/server.cs"))
+		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon9 @ "/server.cs");
 	
-	if($FK::Pref::Exec::Addon10 !$= "" && isFile("Add-Ons/" @ $FK::Pref::Exec::Addon10 @ "/server.cs"))
-		exec("Add-Ons/" @ $FK::Pref::Exec::Addon10 @ "/server.cs");
+	if($Pref::Server::FASTKarts::LoadAddon10 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon10 @ "/server.cs"))
+		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon10 @ "/server.cs");
 	
 	//chat emotes compatability
 	if(isPackage(chatEmotesServer))
@@ -284,16 +394,7 @@ if(!$FK::Initialized)
 	
 	//support_preferences compatatbility
 	if($RTB::Hooks::ServerControl)
-	{
 		FK_RegisterRTBPrefs();
-		echo("Making sure FASTKarts' prefs.cs changes are loaded...");
-		FK_LoadPrefs();
-		
-		if(isPackage(GameModeFASTKartsSupportPreferencesPackage))
-			deactivatePackage(GameModeFASTKartsSupportPreferencesPackage);
-		if(isFunction(serverCmdUpdatePref))
-			activatePackage(GameModeFASTKartsSupportPreferencesPackage);
-	}
 	
 	//$FK::Initialized = true; //GameModeInitialResetCheck does this already
 	FK_Tick();

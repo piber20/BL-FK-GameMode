@@ -1,4 +1,4 @@
-if($FK::Pref::Karts::ForceDefault)
+if($Pref::Server::FASTKarts::ForceSpeedkarts)
 	exec("Add-Ons/Gamemode_SpeedKart/karts/speedkart.cs");
 else
 	exec("./karts/Karts.cs");

@@ -1,6 +1,6 @@
 FAST your opponents!!1!
 overhaul of speedkart
-Version 7.2
+Version 8
 
 By piber20 and Mr Noobler.
 Full credits can be viewed ingame with the /fkCredits command.

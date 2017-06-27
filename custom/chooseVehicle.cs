@@ -16,7 +16,7 @@ function fxDTSBrick::chooseVehicle(%this, %vehicle, %client)
 	
 	if(FK_getKartsAllowed() < 1)
 	{
-		$FK::Pref::Karts::AllowSpeedKart = true;
+		$Pref::Server::FASTKarts::AllowSpeedKart = true;
 		SpeedKartVehicle.uiName = "SpeedKart";
 		%this.setVehicle(FK_getFirstKartAllowed(), %client);
 		return;

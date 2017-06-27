@@ -40,7 +40,7 @@ function GameConnection::FK_getAchievementListString(%this, %achievement)
 
 function serverCmdAchievements(%client)
 {
-	if(!$FK::Pref::Gameplay::Achievements)
+	if(!$Pref::Server::FASTKarts::Achievements)
 		return;
 	
 	messageClient(%this, '', "\c6All the achievements in the gamemode:");

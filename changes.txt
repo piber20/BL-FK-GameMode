@@ -5,3 +5,5 @@ Allowed Karts prefs are in a changed category
 Tips have been improved, and will better reflect what prefs the host has set
 
 Better handling for when the default speedkarts are being forced
+
+After Dark had an invisible brick removed, as it made bouncy rounds impossible to complete

@@ -12,6 +12,7 @@ function serverCmdHelp(%client)
 	if(%client.isAdmin)
 		messageClient(%client, '', "\c6 - \c3/fkAdmin \c6- Lists the commands only an administrator can use.");
 	messageClient(%client, '', "\c6 - \c3/fkCredits \c6- View the credits");
+	messageClient(%client, '', "\c6 - \c3/download \c6- Where to download the gamemode.");
 	messageClient(%client, '', "\c6Your goal is to complete the race. Some tracks have more than one lap.");
 	messageClient(%client, '', "\c6Click on the vehicle spawn, choose a speedkart, and color it with your paint can.");
 }
@@ -179,6 +180,16 @@ function serverCmdFKCredits(%client)
 	messageClient(%client, '', "<a:https://forum.blockland.us/index.php?topic=286400>siba's ModTer Pack</a>\c6 by siba.");
 }
 
+function serverCmdDownload(%client)
+{
+	messageClient(%client, '', "\c6The \c2FASTKarts\c6 gamemode can be found at these locations:");
+	messageClient(%client, '', "<a:http://piber20.com/d/bl/>piber20.com</a>");
+	messageClient(%client, '', "<a:https://forum.blockland.us/index.php?topic=305706.0>Blockland Forums</a>");
+	messageClient(%client, '', "<a:https://blocklandglass.com/addons/addon.php?id=496>Blockland Glass</a>");
+	messageClient(%client, '', "<a:http://www.nexusmods.com/blockland/mods/46/?>NexusMods</a>");
+	messageClient(%client, '', "<a:https://github.com/piber20/BL-FK-GameMode/releases>GitHub</a>");
+}
+
 function FK_TipTick()
 {
 	cancel($FK::TipTick);
@@ -192,23 +203,33 @@ function FK_TipTick()
 	{
 		%pick = 0;
 		%tip[%pick++] = "\c5Tip\c6: Watch out! Touching water with your kart or otherwise will lead to death!";
-		%tip[%pick++] = "\c6The gamemode can be downloaded at <a:http://piber20.com/d/bl/>piber20.com</a>\c6 or <a:https://forum.blockland.us/index.php?topic=305706.0>Blockland Forums</a>\c6.";
-		%tip[%pick++] = "\c5Tip\c6: If you lose your kart, try jumping off of ramps for a tiny speed boost.";
+		%tip[%pick++] = "\c6Want to host this gamemode yourself? Type this command into chat: \c3/download";
 		%tip[%pick++] = "\c5Tip\c6: Vehicles can be suprisingly effective killing machines.";
-		%tip[%pick++] = "\c5Tip\c6: Each kart has slightly different stats, some being faster but requiring more skill.";
-		%tip[%pick++] = "\c5Tip\c6: The standard Speedkart is a good starter kart for beginners.";
 		%tip[%pick++] = "\c5Tip\c6: Drifting can help you cut corners better.";
-		%tip[%pick++] = "\c5Tip\c6: Disabling Strafe Controls can help you be more precise, but requires you to adjust to it.";
+		%tip[%pick++] = "\c5Tip\c6: Disabling Strafe Controls can help you move your kart more precisely.";
 		%tip[%pick++] = "\c5Tip\c6: Braking is key.";
-		%tip[%pick++] = "\c5Tip\c6: Experiment with karts to see which one is right for you.";
 		%tip[%pick++] = "\c5Tip\c6: Click the vehicle spawn to to spawn a speedkart.";
 		%tip[%pick++] = "\c5Tip\c6: You can color your kart by simply spraying it with your paint can.";
 		%tip[%pick++] = "\c5Tip\c6: Press your brick plant key to make your kart flip. This can get you unstuck or help you do some sick tricks.";
-		%tip[%pick++] = "\c5Tip\c6: The Speedkart Original is one of the fastest karts, but has a really strong grip which can make it hard to control.";
-		%tip[%pick++] = "\c5Tip\c6: If you see some odd floating bricks, try typing \"FlushVBOCache();\" in your console.";
+		%tip[%pick++] = "\c5Tip\c6: If you see some floating bricks that shouldn't be there, try typing \"FlushVBOCache();\" in your console.";
 		
-		if($Pref::Server::FASTKarts::AllowSuperATV)
-			%tip[%pick++] = "\c5Tip\c6: The Speedkart Hover II is one of the fastest karts, but is very slippery which can make it hard to control.";
+		if(FK_getKartsAllowed() > 1 && !$Pref::Server::FASTKarts::ForceSpeedkarts)
+		{
+			%tip[%pick++] = "\c5Tip\c6: Experiment with karts to see which one is right for you.";
+			%tip[%pick++] = "\c5Tip\c6: Each kart has slightly different stats, some being faster but requiring more skill.";
+			
+			if($Pref::Server::FASTKarts::AllowSpeedKart)
+				%tip[%pick++] = "\c5Tip\c6: The standard Speedkart is a good starter kart for beginners.";
+		
+			if($Pref::Server::FASTKarts::AllowOriginal)
+				%tip[%pick++] = "\c5Tip\c6: The Speedkart Original is one of the fastest karts, but has a really strong grip which can make it hard to control.";
+			
+			if($Pref::Server::FASTKarts::AllowSuperHover)
+				%tip[%pick++] = "\c5Tip\c6: The " @ SpeedKartHoverIIVehicle.uiName @ " is one of the fastest karts, but is very slippery which can make it hard to control.";
+		}
+		
+		if($Pref::Server::FASTKarts::NoKartKillTime != 0)
+			%tip[%pick++] = "\c5Tip\c6: If you lose your kart, try jumping off of ramps for a tiny speed boost.";
 		
 		if($Pref::Server::FASTKarts::Achievements)
 			%tip[%pick++] = "\c5Tip\c6: Did you type \"/help\" into chat? You get a free achievement if you do!";
@@ -216,7 +237,6 @@ function FK_TipTick()
 			%tip[%pick++] = "\c5Tip\c6: Did you type \"/help\" into chat?";
 		
 		%random = getRandom(1, %pick);
-		//echo("(TIP)" @ %tip[%random]);
 		messageAll('', %tip[%random]);
 	}
 	

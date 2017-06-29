@@ -1,20 +1,7 @@
-v8:
+v8.1:
 
-Changed prefs into normal $Pref::Server:: prefs. FASTKarts prefs are no longer stored in their own file
-You will need to redo your settings, but this should be easier to deal with in the long run.
+Allowed Karts prefs are in a changed category
 
-Removed pref presets
+Tips have been improved, and will better reflect what prefs the host has set
 
-Chat message commands are now nearly identical to source code. This should make the chat safer and more true to default blockland
-Because this is nearly default chat, FASTKarts' own flood protection pref has been removed in favor of the default pref
-
-Admin tags have been removed - May be moved to a standalone add-on
-
-Removed hide admin commands pref - admin commands will now always be hidden
-
-Removed pref-changing commands to simplify things - you now need to use Glass or RTB to change the prefs
-
-Players are now killed after 30 seconds of not being in a vehicle
-This can be customised with a pref - Setting it to -1 will disable this feature
-
-Speedkarts spawned after the race begins will now spawn powered
+Better handling for when the default speedkarts are being forced

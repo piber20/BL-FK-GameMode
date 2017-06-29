@@ -1,5 +1,8 @@
 function FK_getKartsAllowed()
 {
+	if($Pref::Server::FASTKarts::ForceSpeedkarts)
+		return 14;
+	
 	%types = $Pref::Server::FASTKarts::AllowSpeedKart + $Pref::Server::FASTKarts::Allow64 + $Pref::Server::FASTKarts::Allow7 + $Pref::Server::FASTKarts::AllowBlocko + $Pref::Server::FASTKarts::AllowBuggy + $Pref::Server::FASTKarts::AllowClassic + $Pref::Server::FASTKarts::AllowClassicGT + $Pref::Server::FASTKarts::AllowFormula + $Pref::Server::FASTKarts::AllowHotrod + $Pref::Server::FASTKarts::AllowHover + $Pref::Server::FASTKarts::AllowHyperion + $Pref::Server::FASTKarts::AllowJeep + $Pref::Server::FASTKarts::AllowLeMans + $Pref::Server::FASTKarts::AllowMuscle + $Pref::Server::FASTKarts::AllowVintage + $Pref::Server::FASTKarts::AllowOriginal + $Pref::Server::FASTKarts::AllowDefault + $Pref::Server::FASTKarts::AllowSuperATV + $Pref::Server::FASTKarts::AllowSuperHover + $Pref::Server::FASTKarts::AllowSuperKart + $Pref::Server::FASTKarts::AllowSuperJetski + $Pref::Server::FASTKarts::AllowSuperPlane;
 	return %types;
 }

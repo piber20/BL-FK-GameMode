@@ -8,8 +8,6 @@ function FK_getAchievementDescription(%achievement)
 		%description = "Jump in to a pool of water.";
 	if(%achievement $= "Fallure")
 		%description = "Fall ten times and die.";
-	if(%achievement $= "Where am I")
-		%description = "Die far away from the spawn.";
 	
 	if(%achievement $= "Self Help")
 		%description = "Use the help command.";
@@ -47,7 +45,6 @@ function serverCmdAchievements(%client)
 	%client.FK_getAchievementListString("Hugs Make Things Better");
 	%client.FK_getAchievementListString("I Think it Burns");
 	%client.FK_getAchievementListString("Fallure");
-	%client.FK_getAchievementListString("Where am I");
 	
 	%client.FK_getAchievementListString("Self Help");
 	%client.FK_getAchievementListString("Cheater");

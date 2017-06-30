@@ -178,6 +178,7 @@ function serverCmdFKCredits(%client)
 	messageClient(%client, '', "<a:http://orbs.daprogs.com/rtb/forum.returntoblockland.com/dlm/viewFilebb35.html?id=735>Achievements</a>\c6 by DarkLight. (overhauled)");
 	messageClient(%client, '', "<a:https://blocklandglass.com/addons/addon.php?id=208>Brick Zone Events</a>\c6 by MeltingPlastic. (overhauled)");
 	messageClient(%client, '', "<a:https://forum.blockland.us/index.php?topic=286400>siba's ModTer Pack</a>\c6 by siba.");
+	messageClient(%client, '', "<a:https://forum.blockland.us/index.php?topic=311104>Modified Modter</a>\c6 by piber20.");
 }
 
 function serverCmdDownload(%client)

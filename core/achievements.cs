@@ -72,7 +72,6 @@ function sendAchievements(%client) //overwriting the original add-on, we're taki
 	sendLockedAchievementToClient(%client, "hugger",	"Hugs Make Things Better",	FK_getAchievementDescription("Hugs Make Things Better"),	%general);
 	sendLockedAchievementToClient(%client, "censored",	"I Think it Burns",			FK_getAchievementDescription("I Think it Burns"),			%deathmatch);
 	sendLockedAchievementToClient(%client, "fail",		"Fallure",					FK_getAchievementDescription("Fallure"),					%deathmatch);
-	sendLockedAchievementToClient(%client, "unknown",	"Where am I",				FK_getAchievementDescription("Where am I"),					%deathmatch);
 	
 	//Edited Steam Ports
 	sendLockedAchievementToClient(%client, "pa",		"Self Help",				FK_getAchievementDescription("Self Help"),					%general);
@@ -93,17 +92,15 @@ package FKAchievementsPackage
 	function GameConnection::onDeath(%this, %killerPlayer, %killer, %damageType, %damageLoc)
 	{
 		%player = %this.player;
-		if(%player.getType() & $TypeMasks::PlayerObjectType)
+		if(isObject(%player))
 		{
-			%playerPosition = %player.getPosition();
-			
 			if(%killer != %this && isObject(%killer))
 			{
-				if(%damageType == $DamageType::Vehicle)
+				if(%damageType $= $DamageType::Vehicle)
 					unlockClientAchievement(%killer, "Road Kill");
 			}
 			
-			if(%damageType == $DamageType::Fall) 
+			if(%damageType == $DamageType::Lava || %damageType == $DamageType::Fall) 
 			{
 				%this.lavaDeaths++;
 				unlockClientAchievement(%this, "I Think it Burns");
@@ -111,14 +108,6 @@ package FKAchievementsPackage
 				if(%this.lavaDeaths >= 10)
 					unlockClientAchievement(%this, "Fallure");
 			}
-	
-			if(getWord(%playerPosition, 0) >= 1000
-			|| getWord(%playerPosition, 1) >= 1000
-			|| getWord(%playerPosition, 2) >= 1000
-			|| getWord(%playerPosition, 0) <= -1000
-			|| getWord(%playerPosition, 1) <= -1000
-			|| getWord(%playerPosition, 2) <= -1000)
-				unlockClientAchievement(%this, "Where am I");
 		}
 		
 		parent::onDeath(%this, %killerPlayer, %killer, %damageType, %damageLoc);

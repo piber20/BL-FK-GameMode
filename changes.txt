@@ -1,15 +1,7 @@
-v9:
+v10:
 
-Allowed Karts prefs are in a separate category
+Use Old Names pref is now more descriptive, shows up as "Rename SuperKarts to SpeedKarts" in rtb/glass prefs
 
-Tips have been improved, and will better reflect what prefs the host has set
+You can now load music from the custom gamemode (pref is disabled by default)
 
-Better handling for when the default speedkarts are being forced
-
-After Dark had an invisible brick removed, as it made bouncy rounds impossible to complete
-
-Modified Modter has been integrated to replace integrated modter code
-
-Removed Where Am I achievement
-
-Death-related achievements have finally been fixed
+You are now told to check the /download command if you have no tracks loaded

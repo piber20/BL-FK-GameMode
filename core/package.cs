@@ -15,6 +15,7 @@ package GameModeFASTKartsPackage
 		if($FK::numTracks == 0)
 		{
 			messageAll('', "\c5No FASTKarts tracks available!");
+			messageAll('', "\c5You can find where tracks are hosted by typing this command into chat: \c3/download");
 			return;
 		}
 		

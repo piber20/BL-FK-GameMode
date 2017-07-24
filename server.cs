@@ -216,6 +216,10 @@ function FK_LoadPrefs()
 	//ADDON PREFS//
 	///////////////
 	
+	//allows players to load music from their custom gamemode
+	if($Pref::Server::FASTKarts::LoadCustomMusic $= "")
+		$Pref::Server::FASTKarts::LoadCustomMusic = false;
+	
 	//addons to load after gamemode execution, only works with addons that have a server.cs, and that's executed directly.
 	if($Pref::Server::FASTKarts::LoadAddon1 $= "")
 		$Pref::Server::FASTKarts::LoadAddon1 = "";
@@ -276,7 +280,7 @@ function FK_RegisterRTBPrefs()
 	RTB_registerPref("Horn Delay",							"FASTKarts - Karts",	"$Pref::Server::FASTKarts::HornMS",				"int 0 9999",	"GameMode_FASTKarts",	50,		false,	false,	false);
 	RTB_registerPref("Engine Sounds",						"FASTKarts - Karts",	"$Pref::Server::FASTKarts::EngineSounds",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
 	RTB_registerPref("Back and Forward leaning in karts",	"FASTKarts - Karts",	"$Pref::Server::FASTKarts::BackForwardLeaning",	"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
-	RTB_registerPref("Use Old Names",						"FASTKarts - Karts",	"$Pref::Server::FASTKarts::OldKartNames",		"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
+	RTB_registerPref("Rename SuperKarts to SpeedKarts",		"FASTKarts - Karts",	"$Pref::Server::FASTKarts::OldKartNames",		"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
 	RTB_registerPref("Force default SpeedKarts",			"FASTKarts - Karts",	"$Pref::Server::FASTKarts::ForceSpeedkarts",	"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
 	
 	RTB_registerPref("Allow SpeedKart",						"FASTKarts - Allowed Karts",	"$Pref::Server::FASTKarts::AllowSpeedKart",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
@@ -313,16 +317,17 @@ function FK_RegisterRTBPrefs()
 		RTB_registerPref("Allow SuperKart Plane",			"FASTKarts - Allowed Karts",	"$Pref::Server::FASTKarts::AllowSuperPlane",	"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
 	}
 	
-	RTB_registerPref("First add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon1",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
-	RTB_registerPref("Second add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon2",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
-	RTB_registerPref("Third add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon3",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
-	RTB_registerPref("Fourth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon4",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
-	RTB_registerPref("Fifth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon5",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
-	RTB_registerPref("Sixth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon6",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
-	RTB_registerPref("Seventh add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon7",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
-	RTB_registerPref("Eighth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon8",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
-	RTB_registerPref("Ninth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon9",		"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
-	RTB_registerPref("Tenth add-on to load",	"FASTKarts - AddOns",	"$Pref::Server::FASTKarts::LoadAddon10",	"string 200",	"GameMode_FASTKarts",	"",	true,	false,	false);
+	RTB_registerPref("Load music from Custom GameMode",	"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadCustomMusic",	"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
+	RTB_registerPref("First add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon1",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Second add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon2",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Third add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon3",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Fourth add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon4",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Fifth add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon5",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Sixth add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon6",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Seventh add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon7",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Eighth add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon8",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Ninth add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon9",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
+	RTB_registerPref("Tenth add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon10",		"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
 }
 
 if(!$FK::Initialized)
@@ -358,37 +363,71 @@ echo("");
 
 if(!$FK::Initialized)
 {
-	echo("=== Executing add-ons that the host wanted ===");
+	if($Pref::Server::FASTKarts::LoadCustomMusic)
+	{
+		echo("=== Loading music from Custom GameMode ===");
+		createMusicDatablocks();
+	}
 	
 	if($Pref::Server::FASTKarts::LoadAddon1 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon1 @ "/server.cs"))
+	{
+		echo("=== Executing add-on 1 ===");
 		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon1 @ "/server.cs");
+	}
 	
 	if($Pref::Server::FASTKarts::LoadAddon2 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon2 @ "/server.cs"))
+	{
+		echo("=== Executing add-on 2 ===");
 		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon2 @ "/server.cs");
+	}
 	
 	if($Pref::Server::FASTKarts::LoadAddon3 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon3 @ "/server.cs"))
+	{
+		echo("=== Executing add-on 3 ===");
 		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon3 @ "/server.cs");
+	}
 	
 	if($Pref::Server::FASTKarts::LoadAddon4 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon4 @ "/server.cs"))
+	{
+		echo("=== Executing add-on 4 ===");
 		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon4 @ "/server.cs");
+	}
 	
 	if($Pref::Server::FASTKarts::LoadAddon5 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon5 @ "/server.cs"))
+	{
+		echo("=== Executing add-on 5 ===");
 		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon5 @ "/server.cs");
+	}
 	
 	if($Pref::Server::FASTKarts::LoadAddon6 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon6 @ "/server.cs"))
+	{
+		echo("=== Executing add-on 6 ===");
 		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon6 @ "/server.cs");
+	}
 	
 	if($Pref::Server::FASTKarts::LoadAddon7 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon7 @ "/server.cs"))
+	{
+		echo("=== Executing add-on 7 ===");
 		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon7 @ "/server.cs");
+	}
 	
 	if($Pref::Server::FASTKarts::LoadAddon8 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon8 @ "/server.cs"))
+	{
+		echo("=== Executing add-on 8 ===");
 		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon8 @ "/server.cs");
+	}
 	
 	if($Pref::Server::FASTKarts::LoadAddon9 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon9 @ "/server.cs"))
+	{
+		echo("=== Executing add-on 9 ===");
 		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon9 @ "/server.cs");
+	}
 	
 	if($Pref::Server::FASTKarts::LoadAddon10 !$= "" && isFile("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon10 @ "/server.cs"))
+	{
+		echo("=== Executing add-on 10 ===");
 		exec("Add-Ons/" @ $Pref::Server::FASTKarts::LoadAddon10 @ "/server.cs");
+	}
 	
 	//chat emotes compatability
 	if(isPackage(chatEmotesServer))

@@ -251,7 +251,7 @@ function FK_LoadPrefs()
 	if($Pref::Server::FASTKarts::LoadAddon10 $= "")
 		$Pref::Server::FASTKarts::LoadAddon10 = "";
 	
-	$FK::Version = 9;
+	$FK::Version = 10;
 }
 
 function FK_RegisterRTBPrefs()

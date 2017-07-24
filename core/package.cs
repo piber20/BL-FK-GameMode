@@ -287,7 +287,7 @@ package GameModeFASTKartsPackage
 			$FK::ResetCount++;
 		
 		//force round number to the last round to effectively stop track rotation
-		if($FK::ResetCount > $Pref::Server::FASTKarts::RoundLimit && $Pref::Server::FASTKarts::RoundLimit <= 0)
+		if($FK::ResetCount > $Pref::Server::FASTKarts::RoundLimit && ($Pref::Server::FASTKarts::RoundLimit <= 0 || $FK::numTracks <= 0))
 			$FK::ResetCount = $Pref::Server::FASTKarts::RoundLimit;
 
 		if($FK::VoteNextRound)
@@ -298,7 +298,7 @@ package GameModeFASTKartsPackage
 			$FK::onWinRaceList = "";
 			FK_NextTrack();
 		}
-		else if($FK::ResetCount > $Pref::Server::FASTKarts::RoundLimit && $Pref::Server::FASTKarts::RoundLimit > 0)
+		else if($FK::ResetCount > $Pref::Server::FASTKarts::RoundLimit && ($Pref::Server::FASTKarts::RoundLimit > 0 && $FK::numTracks > 0))
 		{
 			$FK::ResetCount = 0;
 			$FK::onWinRaceList = "";
@@ -318,7 +318,7 @@ package GameModeFASTKartsPackage
 			echo("Beginning round...");
 			FK_DetermineRoundType();
 			
-			if($Pref::Server::FASTKarts::RoundLimit > 0)
+			if($Pref::Server::FASTKarts::RoundLimit > 0 && $FK::numTracks > 0)
 				messageAll('', "\c5Beginning round " @ $FK::ResetCount @ " of " @ $Pref::Server::FASTKarts::RoundLimit @ ".");
 			else
 				messageAll('', "\c5Beginning round.");
@@ -326,6 +326,13 @@ package GameModeFASTKartsPackage
 			$FK::TrackStarted = false;
 			$FK::TrackCompleted = false;
 			Parent::Reset(%obj, %client);
+			
+			if($FK::numTracks == 0)
+			{
+				messageAll('', "\c5No FASTKarts tracks available!");
+				messageAll('', "\c5You can find where tracks are hosted by typing this command into chat: \c3/download");
+				return;
+			}
 			
 			for(%a = 0; %a < $DefaultMinigame.numMembers; %a++)
 			{

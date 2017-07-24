@@ -196,12 +196,7 @@ function FK_TipTick()
 	cancel($FK::TipTick);
 	
 	%secs = 60;
-	if($FK::numTracks == 0)
-	{
-		messageAll('', "\c5No FASTKarts tracks available!");
-		messageAll('', "\c5You can find where tracks are hosted by typing this command into chat: \c3/download");
-	}
-	else if($DefaultMinigame.numMembers > 0 && mfloor($Pref::Server::FASTKarts::TipSeconds) > 0)
+	if($DefaultMinigame.numMembers > 0 && mfloor($Pref::Server::FASTKarts::TipSeconds) > 0)
 	{
 		%pick = 0;
 		%tip[%pick++] = "\c5Tip\c6: Watch out! Touching water with your kart or otherwise will lead to death!";

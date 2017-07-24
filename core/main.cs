@@ -86,7 +86,7 @@ function gameConnection::FK_setBottomPrintInfo(%this)
 		%this.FKBottomPrint = "<just:left>";
 		
 		//round
-		if($Pref::Server::FASTKarts::RoundLimit > 0)
+		if($Pref::Server::FASTKarts::RoundLimit > 0 && $FK::numTracks > 0)
 			%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Round" @ %color @ ": " @ mfloor($FK::ResetCount) @ "/" @ mfloor($Pref::Server::FASTKarts::RoundLimit) @ "   ";
 		
 		//time
@@ -109,7 +109,8 @@ function gameConnection::FK_setBottomPrintInfo(%this)
 		%this.FKBottomPrint = %this.FKBottomPrint @ "<br><just:left>";
 		
 		//track
-		%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Track" @ %color @ ": " @ FK_getTrackName($FK::CurrentTrack);
+		if($FK::numTracks > 0)
+			%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Track" @ %color @ ": " @ FK_getTrackName($FK::CurrentTrack);
 	}
 		
 	//completed building it, send it.

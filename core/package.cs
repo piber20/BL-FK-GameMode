@@ -253,6 +253,10 @@ package GameModeFASTKartsPackage
 					for(%a = 0; %a < $DefaultMinigame.numMembers; %a++)
 					{
 						%member = $DefaultMinigame.member[%a];
+						
+						if($FK::numTracks <= 0)
+							$FK::StartingLap = 1;
+						
 						%member.FASTKartsLap = mfloor($FK::StartingLap);
 						if($FK::StartingLap != 0)
 							messageClient(%member, '', "\c5Started race.");

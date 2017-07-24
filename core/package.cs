@@ -14,6 +14,14 @@ package GameModeFASTKartsPackage
 		//if tracklist is still empty, there are no tracks
 		if($FK::numTracks == 0)
 		{
+			//default track config
+			$FK::StartingLap = 1;
+			$FK::trackCredits = "NONE";
+			$FK::trackDescription = "NONE";
+			$FK::trackEnvironment = 0;
+			$FK::trackFile = "Add-Ons/GameMode_FASTKarts/save.bls";
+			
+			//message
 			messageAll('', "\c5No FASTKarts tracks available!");
 			messageAll('', "\c5You can find where tracks are hosted by typing this command into chat: \c3/download");
 			return;
@@ -253,10 +261,6 @@ package GameModeFASTKartsPackage
 					for(%a = 0; %a < $DefaultMinigame.numMembers; %a++)
 					{
 						%member = $DefaultMinigame.member[%a];
-						
-						if($FK::numTracks <= 0)
-							$FK::StartingLap = 1;
-						
 						%member.FASTKartsLap = mfloor($FK::StartingLap);
 						if($FK::StartingLap != 0)
 							messageClient(%member, '', "\c5Started race.");

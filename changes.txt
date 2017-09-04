@@ -1,9 +1,0 @@
-v10:
-
-Use Old Names pref is now more descriptive, shows up as "Rename SuperKarts to SpeedKarts" in rtb/glass prefs
-
-You can now load music from the custom gamemode (pref is disabled by default)
-
-You are now told to check the /download command if you have no tracks loaded
-
-Gamemode is now playable without any track, the Lighthouse track is loaded by default. You will still get messages about needing to download maps, though

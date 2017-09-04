@@ -14,10 +14,10 @@ Many of the gamemode's features are configurable with preferences that can be ch
 - This directory contains the gamemode's source files.
 
 ./DeathMatchOfficialMaps/
-- These are all the "official" tracks made to be used with the gamemode.
+- These are all the officially supported tracks made to be used with the gamemode.
 
 # Contributing
-The gamemode is at a "completed" state, but you can still help by fixing bugs or adding some quality-of-life features. Feel free to create pull requests and we'll take a look at it!
+The gamemode is at a completed state, but you can still help by fixing bugs or adding some quality-of-life features. Feel free to create pull requests and we'll take a look at it!
 
 # License
 This gamemode is published under GNU General Public License 3.0.

@@ -422,14 +422,14 @@ package GameModeFASTKartsPackage
 			if(isObject(%player))
 			{
 				//nothing by default
-				%weapon0 = 0;
+				%weapon0 = emptyItem.getID();
 				%weapon1 = 0;
 				%weapon2 = 0;
 				%weapon3 = 0;
 				%weapon4 = 0;
 				
 				//get loadouts based on round type
-				if($FK::RoundType $= "NORMAL" || $FK::RoundType $= "BOUNCY")
+				if($FK::RoundType $= "NORMAL" && $Pref::Server::FASTKarts::EnableNoveltyItems)
 				{
 					%weapon0 = BangGunItem.getID();
 					%weapon1 = BananaItem.getID();

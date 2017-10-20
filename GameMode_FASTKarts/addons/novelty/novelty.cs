@@ -1,3 +1,4 @@
+exec("./Empty.cs");
 exec("./BangGun.cs");
 exec("./Flag.cs");
 exec("./Yoyo.cs");

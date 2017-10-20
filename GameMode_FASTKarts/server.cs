@@ -140,6 +140,10 @@ function FK_LoadPrefs()
 	if($Pref::Server::FASTKarts::ForceSpeedkarts $= "")
 		$Pref::Server::FASTKarts::ForceSpeedkarts = false;
 	
+	//spawns players with novelty items that do nothing
+	if($Pref::Server::FASTKarts::EnableNoveltyItems $= "")
+		$Pref::Server::FASTKarts::EnableNoveltyItems = true;
+	
 	///////////////////////
 	//ALLOWED KARTS PREFS//
 	///////////////////////
@@ -296,6 +300,7 @@ function FK_RegisterRTBPrefs()
 	RTB_registerPref("Announce new records",								"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::AnnounceRecords",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Show full time on race completion",					"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::ShowMilliseconds",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Kill kartless players after X seconds (-1 disables)",	"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::NoKartKillTime",		"int -1 99999",	"GameMode_FASTKarts",	30,		false,	false,	false);
+	RTB_registerPref("Enable novelty items",								"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::EnableNoveltyItems",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
 	
 	RTB_registerPref("Horn Sounds",							"FASTKarts - Karts",	"$Pref::Server::FASTKarts::HornSounds",			"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
 	RTB_registerPref("Horn Delay",							"FASTKarts - Karts",	"$Pref::Server::FASTKarts::HornMS",				"int 0 9999",	"GameMode_FASTKarts",	50,		false,	false,	false);

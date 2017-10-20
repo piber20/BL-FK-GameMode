@@ -1,8 +1,12 @@
 function serverCmdHelp(%client)
 {
 	messageClient(%client, '', "\c6FASTKarts GameMode v" @ $FK::Version @ ". Here is a list of \c3commands\c6.");
-	if($Pref::Server::FASTKarts::EnableTrackVoting == 1 || $Pref::Server::FASTKarts::RoundLimit > 0)
-		messageClient(%client, '', "\c6 - \c3/trackList \c6- Lists every track.");
+	if($Pref::Server::FASTKarts::EnableTrackVoting $= 1 || $Pref::Server::FASTKarts::RoundLimit > 0)
+	{
+		messageClient(%client, '', "\c6 - \c3/trackList \c6- Lists every track that can currently load.");
+		if($Pref::Server::FASTKarts::ForceTrackOrigin > 0 || $Pref::Server::FASTKarts::ForceTrackType > 0)
+			messageClient(%client, '', "\c6 - \c3/trackList all \c6- Lists every single track that exists in the server.");
+	}
 	if($Pref::Server::FASTKarts::EnableTrackVoting $= 1)
 		messageClient(%client, '', "\c6 - \c3/voteTrack (number) \c6- Vote for a track to load.");
 	messageClient(%client, '', "\c6 - \c3/trackRecord (number) \c6- Lists the records for the track provided.");
@@ -17,18 +21,136 @@ function serverCmdHelp(%client)
 	messageClient(%client, '', "\c6Click on the vehicle spawn, choose a speedkart, and color it with your paint can.");
 }
 
-function serverCmdTrackList(%client)
+function serverCmdTrackList(%client, %option)
 {
-	for(%i = 0; %i < $FK::numTracks; %i++)
+	if($Pref::Server::FASTKarts::ForceTrackOrigin == 1)
+		%origin = "SpeedKart";
+	if($Pref::Server::FASTKarts::ForceTrackOrigin == 2)
+		%origin = "SuperKart";
+	if($Pref::Server::FASTKarts::ForceTrackOrigin == 3)
+		%origin = "FASTKarts";
+	
+	if($Pref::Server::FASTKarts::ForceTrackType == 1)
+		%type = "Campaign";
+	if($Pref::Server::FASTKarts::ForceTrackType == 2)
+		%type = "Lapped";
+	if($Pref::Server::FASTKarts::ForceTrackType == 3)
+		%type = "Battle";
+	
+	if(%option $= "all" || ($Pref::Server::FASTKarts::ForceTrackOrigin == 0 && $Pref::Server::FASTKarts::ForceTrackType == 0))
 	{
-		if(%i == $FK::CurrentTrack)
-			messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i));
-		else
-			messageClient(%client, '', "\c2  " @ %i @ ". \c6" @ FK_getTrackName(%i));
-		
-		%tracksCanLoad++;
+		messageClient(%client, '', "\c6These are all the track that exist in the server.");
+		for(%i = 0; %i < $FK::numTracks; %i++)
+		{
+			if($FK::TrackOrigin[%i] $= %origin || $Pref::Server::FASTKarts::ForceTrackOrigin == 0)
+			{
+				if($FK::TrackType[%i] $= %type || $Pref::Server::FASTKarts::ForceTrackType == 0)
+				{
+					if(%i == $FK::CurrentTrack)
+						messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 - \c3" @ $FK::TrackOrigin[%i] @ "\c2 (\c3" @ $FK::TrackType[%i] @ "\c2)");
+					else
+						messageClient(%client, '', "\c2  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 - \c3" @ $FK::TrackOrigin[%i] @ "\c2 (\c3" @ $FK::TrackType[%i] @ "\c2)");
+					
+					%tracksCanLoad++;
+				}
+				else
+				{
+					if(%i == $FK::CurrentTrack)
+						messageClient(%client, '', "\c5>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c5 - \c3" @ $FK::TrackOrigin[%i] @ "\c5 (\c3" @ $FK::TrackType[%i] @ "\c5)");
+					else
+						messageClient(%client, '', "\c5  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c5 - \c3" @ $FK::TrackOrigin[%i] @ "\c5 (\c3" @ $FK::TrackType[%i] @ "\c5)");
+				}
+			}
+			else
+			{
+				if(%i == $FK::CurrentTrack)
+					messageClient(%client, '', "\c0>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c0 - \c3" @ $FK::TrackOrigin[%i] @ "\c0 (\c3" @ $FK::TrackType[%i] @ "\c0)");
+				else
+					messageClient(%client, '', "\c0  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c0 - \c3" @ $FK::TrackOrigin[%i] @ "\c0 (\c3" @ $FK::TrackType[%i] @ "\c0)");
+			}
+			
+			%tracksExist++;
+		}
+		messageClient(%client, '', "\c6In total, there are \c3" @ %tracksExist @ "\c6 tracks in the server, of which \c2" @ %tracksCanLoad @ "\c6 can load.");
 	}
-	messageClient(%client, '', "\c6In total, there are \c2" @ %tracksCanLoad @ "\c6 tracks.");
+	else if((%option $= "sort" || $Pref::Server::FASTKarts::ForceTrackType == 0) && $Pref::Server::FASTKarts::ForceTrackOrigin > 0)
+	{
+		messageClient(%client, '', "\c6These tracks originate from \c3" @ %origin @ "\c6.");
+		for(%i = 0; %i < $FK::numTracks; %i++)
+		{
+			if($FK::TrackOrigin[%i] $= %origin)
+			{
+				if($FK::TrackType[%i] $= %type || $Pref::Server::FASTKarts::ForceTrackType == 0)
+				{
+					if(%i == $FK::CurrentTrack)
+						messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 (\c3" @ $FK::TrackType[%i] @ "\c2)");
+					else
+						messageClient(%client, '', "\c2  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 (\c3" @ $FK::TrackType[%i] @ "\c2)");
+					
+					%tracksCanLoad++;
+				}
+				else
+				{
+					if(%i == $FK::CurrentTrack)
+						messageClient(%client, '', "\c5>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c5 (\c3" @ $FK::TrackType[%i] @ "\c5)");
+					else
+						messageClient(%client, '', "\c5  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c5 (\c3" @ $FK::TrackType[%i] @ "\c5)");
+				}
+				
+				%tracksSorted++;
+			}
+		}
+		messageClient(%client, '', "\c6In total, there are \c3" @ %tracksSorted @ "\c6 in this list, of which \c2" @ %tracksCanLoad @ "\c6 can load.");
+	}
+	else if((%option $= "theme" || $Pref::Server::FASTKarts::ForceTrackOrigin == 0) && $Pref::Server::FASTKarts::ForceTrackType > 0)
+	{
+		messageClient(%client, '', "\c6These tracks are \c3" @ %type @ "\c6 tracks.");
+		for(%i = 0; %i < $FK::numTracks; %i++)
+		{
+			if($FK::TrackType[%i] $= %type)
+			{
+				if($FK::TrackOrigin[%i] $= %origin || $Pref::Server::FASTKarts::ForceTrackOrigin == 0)
+				{
+					if(%i == $FK::CurrentTrack)
+						messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 - \c3" @ $FK::TrackOrigin[%i]);
+					else
+						messageClient(%client, '', "\c2  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 - \c3" @ $FK::TrackOrigin[%i]);
+					
+					%tracksCanLoad++;
+				}
+				else
+				{
+					if(%i == $FK::CurrentTrack)
+						messageClient(%client, '', "\c0>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c0 - \c3" @ $FK::TrackOrigin[%i]);
+					else
+						messageClient(%client, '', "\c0  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c0 - \c3" @ $FK::TrackOrigin[%i]);
+				}
+				
+				%tracksSorted++;
+			}
+		}
+		messageClient(%client, '', "\c6In total, there are \c3" @ %tracksSorted @ "\c6 in this list, of which \c2" @ %tracksCanLoad @ "\c6 can load.");
+	}
+	else
+	{
+		messageClient(%client, '', "\c6These tracks originate \c3" @ %origin @ "\c6 and are \c3" @ %type @ "\c6 tracks.");
+		for(%i = 0; %i < $FK::numTracks; %i++)
+		{
+			if($FK::TrackOrigin[%i] $= %origin)
+			{
+				if($FK::TrackType[%i] $= %type)
+				{
+					if(%i == $FK::CurrentTrack)
+						messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i));
+					else
+						messageClient(%client, '', "\c2  " @ %i @ ". \c6" @ FK_getTrackName(%i));
+					
+					%tracksCanLoad++;
+				}
+			}
+		}
+		messageClient(%client, '', "\c6In total, there are \c2" @ %tracksCanLoad @ "\c6 tracks that can load.");
+	}
 	
 	if($Pref::Server::FASTKarts::RoundLimit > 0)
 	{

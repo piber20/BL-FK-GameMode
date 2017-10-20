@@ -44,6 +44,14 @@ function FK_LoadPrefs()
 	if($Pref::Server::FASTKarts::RandomTracks $= "")
 		$Pref::Server::FASTKarts::RandomTracks = false;
 	
+	//only allow tracks with the provided type to load
+	if($Pref::Server::FASTKarts::ForceTrackType $= "")
+		$Pref::Server::FASTKarts::ForceTrackType = 0;
+	
+	//only allow tracks with the provided origin to load
+	if($Pref::Server::FASTKarts::ForceTrackOrigin $= "")
+		$Pref::Server::FASTKarts::ForceTrackOrigin = 0;
+	
 	//allow players to vote for tracks
 	if($Pref::Server::FASTKarts::EnableTrackVoting $= "")
 		$Pref::Server::FASTKarts::EnableTrackVoting = 1;
@@ -63,6 +71,10 @@ function FK_LoadPrefs()
 	//play a random song globally when the race starts, admins can change it by adding "server" or "global" to one of the commands above
 	if($Pref::Server::FASTKarts::EnableGlobalMusic $= "")
 		$Pref::Server::FASTKarts::EnableGlobalMusic = false;
+	
+	//global song played is based on the track's music config file
+	if($Pref::Server::FASTKarts::ObeyTrackMusic $= "")
+		$Pref::Server::FASTKarts::ObeyTrackMusic = 2;
 	
 	//announce when music is changed
 	if($Pref::Server::FASTKarts::AnnounceGlobalMusic $= "")
@@ -112,9 +124,9 @@ function FK_LoadPrefs()
 	if($Pref::Server::FASTKarts::ShowMilliseconds $= "")
 		$Pref::Server::FASTKarts::ShowMilliseconds = false;
 	
-	//kill a player after X seconds if they're not in a vehicle
-	if($Pref::Server::FASTKarts::NoKartKillTime $= "")
-		$Pref::Server::FASTKarts::NoKartKillTime = 20;
+	//spawns players with novelty items that do nothing
+	if($Pref::Server::FASTKarts::EnableNoveltyItems $= "")
+		$Pref::Server::FASTKarts::EnableNoveltyItems = true;
 	
 	//////////////
 	//KART PREFS//
@@ -144,9 +156,9 @@ function FK_LoadPrefs()
 	if($Pref::Server::FASTKarts::ForceSpeedkarts $= "")
 		$Pref::Server::FASTKarts::ForceSpeedkarts = false;
 	
-	//spawns players with novelty items that do nothing
-	if($Pref::Server::FASTKarts::EnableNoveltyItems $= "")
-		$Pref::Server::FASTKarts::EnableNoveltyItems = true;
+	//kill a player after X seconds if they're not in a vehicle
+	if($Pref::Server::FASTKarts::NoKartKillTime $= "")
+		$Pref::Server::FASTKarts::NoKartKillTime = 20;
 	
 	///////////////////////
 	//ALLOWED KARTS PREFS//
@@ -286,33 +298,36 @@ function FK_RegisterRTBPrefs()
 	RTB_registerPref("Allow Bouncy round type",				"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::BouncyRounds",		"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Kick idle players after 3 rounds",	"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::KickIdlePlayers",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
 	
-	RTB_registerPref("Load tracks in random order",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::RandomTracks",		"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Allow player track voting",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::EnableTrackVoting",	"list Disallow 0 Allow 1 Round_Only 2",	"GameMode_FASTKarts",	1,		false,	false,	false);
+	RTB_registerPref("Load tracks in random order",					"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::RandomTracks",		"bool",														"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Force only tracks of this type to load",		"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::ForceTrackType",		"list Any_Type 0 Campaign 1 Lapped 2 Battle 3",				"GameMode_FASTKarts",	0,		false,	false,	false);
+	RTB_registerPref("Force only tracks with this origin to load",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::ForceTrackOrigin",	"list Any_Origin 0 SpeedKart 1 SuperKart 2 FASTKarts 3",	"GameMode_FASTKarts",	0,		false,	false,	false);
+	RTB_registerPref("Allow player track voting",					"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::EnableTrackVoting",	"list Disallow 0 Allow 1 Round_Only 2",						"GameMode_FASTKarts",	1,		false,	false,	false);
 	
-	RTB_registerPref("Enable /boombox /stereo /music /setmusic commands",	"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableBoombox",			"bool",	"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Load music from Custom GameMode",						"FASTKarts - Music",	"$Pref::Server::FASTKarts::LoadCustomMusic",		"bool",	"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Play global music (change with \"/music server\")",	"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableGlobalMusic",		"bool",	"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Announce when global music changes",					"FASTKarts - Music",	"$Pref::Server::FASTKarts::AnnounceGlobalMusic",	"bool",	"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable /boombox /stereo /music /setmusic commands",	"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableBoombox",			"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Load music from Custom GameMode",						"FASTKarts - Music",	"$Pref::Server::FASTKarts::LoadCustomMusic",		"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Play global music (change with \"/music server\")",	"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableGlobalMusic",		"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Obey track's music setting",							"FASTKarts - Music",	"$Pref::Server::FASTKarts::ObeyTrackMusic",			"list No 0 Only_First_Round 1 All_Rounds 2",	"GameMode_FASTKarts",	2,		false,	false,	false);
+	RTB_registerPref("Announce when global music changes",					"FASTKarts - Music",	"$Pref::Server::FASTKarts::AnnounceGlobalMusic",	"bool",											"GameMode_FASTKarts",	true,	false,	false,	false);
 	
 	RTB_registerPref("Show tip every X seconds (-1 disables)",	"FASTKarts - Tips",	"$Pref::Server::FASTKarts::TipSeconds",	"int -1 99999",	"GameMode_FASTKarts",	60,	false,	false,	false);
 	
-	RTB_registerPref("Enable achievements system",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::Achievements",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable crumble death effect",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::CrumbleDeath",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable PGDie death effects",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::PGDieEffects",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable PGDie death sounds",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::PGDieSounds",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable random death yells",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::RandomDeathYells",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Allow vehicleless race completions",					"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::VehiclelessWins",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Announce new records",								"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::AnnounceRecords",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Show full time on race completion",					"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::ShowMilliseconds",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Kill kartless players after X seconds (-1 disables)",	"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::NoKartKillTime",		"int -1 99999",	"GameMode_FASTKarts",	30,		false,	false,	false);
-	RTB_registerPref("Enable novelty items",								"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::EnableNoveltyItems",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable achievements system",			"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::Achievements",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable crumble death effect",			"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::CrumbleDeath",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable PGDie death effects",			"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::PGDieEffects",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable PGDie death sounds",			"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::PGDieSounds",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable random death yells",			"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::RandomDeathYells",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow vehicleless race completions",	"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::VehiclelessWins",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Announce new records",				"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::AnnounceRecords",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Show full time on race completion",	"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::ShowMilliseconds",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Enable novelty items",				"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::EnableNoveltyItems",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
 	
-	RTB_registerPref("Horn Sounds",							"FASTKarts - Karts",	"$Pref::Server::FASTKarts::HornSounds",			"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Horn Delay",							"FASTKarts - Karts",	"$Pref::Server::FASTKarts::HornMS",				"int 0 9999",	"GameMode_FASTKarts",	50,		false,	false,	false);
-	RTB_registerPref("Engine Sounds",						"FASTKarts - Karts",	"$Pref::Server::FASTKarts::EngineSounds",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Back and Forward leaning in karts",	"FASTKarts - Karts",	"$Pref::Server::FASTKarts::BackForwardLeaning",	"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
-	RTB_registerPref("Rename SuperKarts to SpeedKarts",		"FASTKarts - Karts",	"$Pref::Server::FASTKarts::OldKartNames",		"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
-	RTB_registerPref("Force default SpeedKarts",			"FASTKarts - Karts",	"$Pref::Server::FASTKarts::ForceSpeedkarts",	"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
+	RTB_registerPref("Horn Sounds",											"FASTKarts - Karts",	"$Pref::Server::FASTKarts::HornSounds",			"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Horn Delay",											"FASTKarts - Karts",	"$Pref::Server::FASTKarts::HornMS",				"int 0 9999",	"GameMode_FASTKarts",	50,		false,	false,	false);
+	RTB_registerPref("Engine Sounds",										"FASTKarts - Karts",	"$Pref::Server::FASTKarts::EngineSounds",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Back and Forward leaning in karts",					"FASTKarts - Karts",	"$Pref::Server::FASTKarts::BackForwardLeaning",	"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
+	RTB_registerPref("Rename SuperKarts to SpeedKarts",						"FASTKarts - Karts",	"$Pref::Server::FASTKarts::OldKartNames",		"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
+	RTB_registerPref("Force default SpeedKarts",							"FASTKarts - Karts",	"$Pref::Server::FASTKarts::ForceSpeedkarts",	"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
+	RTB_registerPref("Kill kartless players after X seconds (-1 disables)",	"FASTKarts - Karts",	"$Pref::Server::FASTKarts::NoKartKillTime",		"int -1 99999",	"GameMode_FASTKarts",	30,		false,	false,	false);
 	
 	RTB_registerPref("Allow SpeedKart",						"FASTKarts - Allowed Karts",	"$Pref::Server::FASTKarts::AllowSpeedKart",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
 	RTB_registerPref("Allow SpeedKart 64",					"FASTKarts - Allowed Karts",	"$Pref::Server::FASTKarts::Allow64",			"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);

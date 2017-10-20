@@ -16,6 +16,7 @@ package GameModeFASTKartsPackage
 		{
 			//default track config
 			$FK::StartingLap = 1;
+			$FK::TrackMusic = "";
 			$FK::trackCredits = "NONE";
 			$FK::trackDescription = "NONE";
 			$FK::trackEnvironment = 0;
@@ -305,14 +306,27 @@ package GameModeFASTKartsPackage
 					//music
 					if($Pref::Server::FASTKarts::EnableGlobalMusic)
 					{
-						for(%b = 0; %b < DataBlockGroup.getCount(); %b++)
+						%music = "";
+						if($Pref::Server::FASTKarts::ObeyTrackMusic == 2 || ($Pref::Server::FASTKarts::ObeyTrackMusic == 1 && $FK::ResetCount <= 1))
+							%music = $FK::TrackMusic;
+						
+						%play = "musicData_" @ %music;
+						%play = strReplace(%play, "-", "DASH");
+						%play = strReplace(%play, "'", "APOS");
+						
+						if(!isObject(%play) || %music $= "")
 						{
-							%datablock = DataBlockGroup.getObject(%b);
-							if(%datablock.getClassName() $= "AudioProfile" && %datablock.uiName !$= "")
-								%song[%songCount++] = %datablock;
+							for(%b = 0; %b < DataBlockGroup.getCount(); %b++)
+							{
+								%datablock = DataBlockGroup.getObject(%b);
+								if(%datablock.getClassName() $= "AudioProfile" && %datablock.uiName !$= "")
+									%song[%songCount++] = %datablock;
+							}
+							%randomsong = getRandom(0,%songCount);
+							%play = %song[%randomsong];
 						}
-						%randomsong = getRandom(0,%songCount);
-						SM_PlaySong("", %song[%randomsong])
+						
+						SM_PlaySong("", %play)
 					}
 				}
 			}

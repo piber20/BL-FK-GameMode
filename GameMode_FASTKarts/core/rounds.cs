@@ -24,7 +24,12 @@ function fxDTSBrick::explodeNearVehicle(%obj)
 	%delta = vectorSub(%vehicle.getPosition(), %obj.getPosition());
 	//echo("len = " @ vectorLen(%delta));
 	if(vectorLen(%delta) < 5) //7.5)
+	{
 		%vehicle.finalExplosion(); //damage(%vehicle, %vehicle.getPosition(), 10000, $DamageType::Default);
+		%client = %vehicle.getControllingClient()
+		if(isObject(%client))
+			%client.FK_LastKartUsed = ""; //so the idle kicker will kick people who are intentionally stalling the server by spawning a kart, going in it, and not moving
+	}
 }
 
 //special event to win the race, displays race time

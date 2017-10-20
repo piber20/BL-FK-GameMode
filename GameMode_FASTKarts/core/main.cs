@@ -95,7 +95,14 @@ function gameConnection::FK_setBottomPrintInfo(%this)
 			if($FK::TrackStarted)
 				%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Time" @ %color @ ": " @ FK_getTimeLeft(%mg);
 			else
+			{
+				if($FK::RoundType $= "BOUNCY")
+					centerPrint(%this, %color @ "This is a Bouncy round. No karts allowed!", 1);
+				else
+					centerPrint(%this, %color @ "Spawn a vehicle by clicking the vehicle spawn.", 1);
+				
 				%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Time" @ %color @ ": 0:00";
+			}
 		}
 		
 		//right

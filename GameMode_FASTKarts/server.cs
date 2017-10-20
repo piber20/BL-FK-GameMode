@@ -32,6 +32,10 @@ function FK_LoadPrefs()
 	if($Pref::Server::FASTKarts::BouncyRounds $= "")
 		$Pref::Server::FASTKarts::BouncyRounds = false;
 	
+	//kicks players after 3 rounds of being idle
+	if($Pref::Server::FASTKarts::KickIdlePlayers $= "")
+		$Pref::Server::FASTKarts::KickIdlePlayers = true;
+	
 	///////////////
 	//TRACK PREFS//
 	///////////////
@@ -276,10 +280,11 @@ function FK_LoadPrefs()
 
 function FK_RegisterRTBPrefs()
 {
-	RTB_registerPref("Rounds per track (-1 disables)",	"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::RoundLimit",		"int -1 9999",	"GameMode_FASTKarts",	6,		false,	false,	false);
-	RTB_registerPref("Allow Normal round type",			"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::NormalRounds",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Allow Rocket round type",			"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::RocketRounds",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Allow Bouncy round type",			"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::BouncyRounds",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Rounds per track (-1 disables)",		"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::RoundLimit",			"int -1 9999",	"GameMode_FASTKarts",	6,		false,	false,	false);
+	RTB_registerPref("Allow Normal round type",				"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::NormalRounds",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow Rocket round type",				"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::RocketRounds",		"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Allow Bouncy round type",				"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::BouncyRounds",		"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Kick idle players after 3 rounds",	"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::KickIdlePlayers",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
 	
 	RTB_registerPref("Load tracks in random order",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::RandomTracks",		"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Allow player track voting",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::EnableTrackVoting",	"list Disallow 0 Allow 1 Round_Only 2",	"GameMode_FASTKarts",	1,		false,	false,	false);

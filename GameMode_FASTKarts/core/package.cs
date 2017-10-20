@@ -74,6 +74,29 @@ package GameModeFASTKartsPackage
 		%obj.damage(%obj, %obj.getPosition(), 10000, $DamageType::Fall);
 	}
 	
+	//record players who died if they never entered a kart and kick them
+	function gameConnection::onDeath(%this, %killerPlayer, %killer, %damageType, %a)
+	{
+		if(%this.FK_LastKartUsed $= "")
+			%this.FK_RoundIdleCounter++;
+		
+		if($Pref::Server::FASTKarts::KickIdlePlayers)
+		{
+			if(%this.FK_RoundIdleCounter >= 3 && %this.FK_RoundIdleWarned)
+			{
+				MessageAll('',"\c3" @ %this.getPlayerName() @ "\c2(ID:" SPC %this.getBLID() @ ") was kicked for being idle for 3 rounds.");
+				%this.delete("You were kicked from the server for being <a:www.urbandictionary.com/define.php?term=Afk>AFK</a>.\nYou may rejoin at any time.");
+			}
+			else if(%this.FK_RoundIdleCounter >= 2)
+			{
+				commandToClient(%this,'MessageBoxOK',"Alert!","You will be kicked from the game if you die again without entering a kart.");
+				%this.FK_RoundIdleWarned = true;
+			}
+		}
+		
+		parent::onDeath(%this, %killerPlayer, %killer, %damageType, %a);
+	}
+	
 	//when vehicle spawns, it cannot move (event must enable it)
 	//this solves the driving through the garage problem
 	function WheeledVehicleData::onAdd(%data,%obj)
@@ -756,6 +779,7 @@ package GameModeFASTKartsPackage
 			
 			centerPrint(%client, %text, 12);
 			%client.FK_LastKartUsed = %data;
+			%client.FK_RoundIdleCounter = 0
 		}
 	}
 	

@@ -19,11 +19,13 @@ function fxDTSBrick::chooseVehicle(%this, %vehicle, %client)
 		$Pref::Server::FASTKarts::AllowSpeedKart = true;
 		SpeedKartVehicle.uiName = "SpeedKart";
 		%this.setVehicle(FK_getFirstKartAllowed(), %client);
+		%client.FK_HasSpawnedSpeedKart = true;
 		return;
 	}
 	else if(FK_getKartsAllowed() == 1)
 	{
 		%this.setVehicle(FK_getFirstKartAllowed(), %client);
+		%client.FK_HasSpawnedSpeedKart = true;
 		return;
 	}
 	
@@ -75,6 +77,10 @@ package ChooseVehicleEventPackage
 					%client.chooseVehicleSpawnBrick.setVehicle(%vehicle, %client);
 				else if(%client.chooseVehicleMode == 1 && getSubStr(%vehicle.uiname, 0, 9) $= "Superkart")
 					%client.chooseVehicleSpawnBrick.setVehicle(%vehicle, %client);
+				
+				%client.FK_HasSpawnedSpeedKart = true;
+				if(%vehicle $= "0")
+					%client.FK_HasSpawnedSpeedKart = false;
 			}
 			%client.chooseVehicleSpawnBrick = "";
 			%client.chooseVehicleMode = "";

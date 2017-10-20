@@ -96,10 +96,17 @@ function gameConnection::FK_setBottomPrintInfo(%this)
 				%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Time" @ %color @ ": " @ FK_getTimeLeft(%mg);
 			else
 			{
-				if($FK::RoundType $= "BOUNCY")
-					centerPrint(%this, %color @ "This is a Bouncy round. No karts allowed!", 1);
+				if((getSimTime() > (%mg.lastResetTime + 7000)) || FK_getRoundTypesAllowed() <= 1)
+				{
+					if($FK::RoundType $= "BOUNCY")
+						centerPrint(%this, %color @ "This is a Bouncy round. No karts allowed!", 1);
+					else if(!%this.FK_HasSpawnedSpeedKart)
+						centerPrint(%this, %color @ "Spawn a vehicle by clicking the vehicle spawn and choosing a vehicle.", 1);
+					else if(%this.FK_LastKartUsed $= "")
+						centerPrint(%this, %color @ "Enter a vehicle by jumping on top of it.", 1);
+				}
 				else
-					centerPrint(%this, %color @ "Spawn a vehicle by clicking the vehicle spawn.", 1);
+					centerPrint(%this, "<font:palatino linotype:64>" @ $FK::RoundName, 1);
 				
 				%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Time" @ %color @ ": 0:00";
 			}

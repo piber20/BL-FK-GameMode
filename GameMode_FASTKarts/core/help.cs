@@ -11,7 +11,7 @@ function serverCmdHelp(%client)
 	messageClient(%client, '', "\c6 - \c3/flip \c6- Flips your kart over. You can also press your brick plant key.");
 	if(%client.isAdmin)
 		messageClient(%client, '', "\c6 - \c3/fkAdmin \c6- Lists the commands only an administrator can use.");
-	messageClient(%client, '', "\c6 - \c3/fkCredits \c6- View the credits");
+	messageClient(%client, '', "\c6 - \c3/credits \c6- View the credits");
 	messageClient(%client, '', "\c6 - \c3/download \c6- Where to download the gamemode.");
 	messageClient(%client, '', "\c6Your goal is to complete the race. Some tracks have more than one lap.");
 	messageClient(%client, '', "\c6Click on the vehicle spawn, choose a speedkart, and color it with your paint can.");
@@ -164,7 +164,7 @@ function serverCmdFKAdmin(%client)
 		messageClient(%client, '', "\c6 - \c3/fkDebug \c6- Lists debug commands only you, the host, can use.");
 }
 
-function serverCmdFKCredits(%client)
+function serverCmdCredits(%client)
 {
 	messageClient(%client, '', "\c6The \c2FASTKarts\c6 gamemode was made by \c3piber20\c6 and \c3Mr Noobler\c6 using the default \c3SpeedKart\c6 gamemode as a base.");
 	messageClient(%client, '', "\c6The overhauled \c2SpeedKarts\c6 were done by \c3Mr Noobler\c6, merging SuperKart and improving physics and skill-based gameplay.");

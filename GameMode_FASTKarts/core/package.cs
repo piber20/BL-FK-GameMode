@@ -388,6 +388,7 @@ package GameModeFASTKartsPackage
 					%member.FKWinner = false;
 					%member.FK_isRockingVote = false;
 					%member.FK_LastKartUsed = "";
+					%member.FK_HasSpawnedSpeedKart = false;
 					%member.setScore();
 					if(FK_getRoundTypesAllowed() > 1)
 						centerPrint(%member, "<font:palatino linotype:64>" @ $FK::RoundName, 7);

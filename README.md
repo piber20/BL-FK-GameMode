@@ -7,13 +7,13 @@ More info: http://blockland.us/
 
 The FASTKarts gamemode is more than just your standard everyday speedkart edit, much more than just adding a /boombox command was done here. Many features have been ported from DeathMatch gamemode to this, and this took lots of effort to get working nicely by all parties involved.
 
-Many of the gamemode's features are configurable with preferences that can be changed ingame through preferences editing mod, like Return to Blockland or Support_Preferences.
+Many of the gamemode's features are configurable with preferences that can be changed ingame through a preferences editing mod, like Return to Blockland or Support_Preferences.
 
 # File structure
 ./GameMode_FASTKarts/
 - This directory contains the gamemode's source files.
 
-./DeathMatchOfficialMaps/
+./FASTKartsOfficialTracks/
 - These are all the officially supported tracks made to be used with the gamemode.
 
 # Contributing

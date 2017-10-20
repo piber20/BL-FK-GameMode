@@ -9,6 +9,7 @@ exec("./pgdie/pgdie.cs");
 exec("./achievements.cs");
 exec("./lists.cs");
 exec("./setmusic.cs");
+exec("./music.cs");
 exec("./bouncyplayer.cs");
 exec("./sibamodter/main.cs");
 exec("./modifiedmodter/main.cs");

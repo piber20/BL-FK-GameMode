@@ -258,6 +258,7 @@ package GameModeFASTKartsPackage
 					
 					serverCmdSetMiniGameData(FK_FakeClient, "BD" SPC 1); //brick damage, turned off at round start
 					
+					//give rockets if it's a rocket round
 					for(%a = 0; %a < $DefaultMinigame.numMembers; %a++)
 					{
 						%member = $DefaultMinigame.member[%a];
@@ -276,6 +277,19 @@ package GameModeFASTKartsPackage
 							}
 						}
 						%member.setScore();
+					}
+					
+					//music
+					if($Pref::Server::FASTKarts::EnableGlobalMusic)
+					{
+						for(%b = 0; %b < DataBlockGroup.getCount(); %b++)
+						{
+							%datablock = DataBlockGroup.getObject(%b);
+							if(%datablock.getClassName() $= "AudioProfile" && %datablock.uiName !$= "")
+								%song[%songCount++] = %datablock;
+						}
+						%randomsong = getRandom(0,%songCount);
+						SM_PlaySong("", %song[%randomsong])
 					}
 				}
 			}

@@ -44,6 +44,26 @@ function FK_LoadPrefs()
 	if($Pref::Server::FASTKarts::EnableTrackVoting $= "")
 		$Pref::Server::FASTKarts::EnableTrackVoting = 1;
 	
+	///////////////
+	//MUSIC PREFS//
+	///////////////
+	
+	//allows players to play music through /setmusic /boombox /stereo or /music commands
+	if($Pref::Server::FASTKarts::EnableBoombox $= "")
+		$Pref::Server::FASTKarts::EnableBoombox = false;
+	
+	//loads music from the custom gamemode
+	if($Pref::Server::FASTKarts::LoadCustomMusic $= "")
+		$Pref::Server::FASTKarts::LoadCustomMusic = false;
+	
+	//play a random song globally when the race starts, admins can change it by adding "server" or "global" to one of the commands above
+	if($Pref::Server::FASTKarts::EnableGlobalMusic $= "")
+		$Pref::Server::FASTKarts::EnableGlobalMusic = false;
+	
+	//announce when music is changed
+	if($Pref::Server::FASTKarts::AnnounceGlobalMusic $= "")
+		$Pref::Server::FASTKarts::AnnounceGlobalMusic = true;
+	
 	/////////////
 	//TIP PREFS//
 	/////////////
@@ -216,10 +236,6 @@ function FK_LoadPrefs()
 	//ADDON PREFS//
 	///////////////
 	
-	//allows players to load music from their custom gamemode
-	if($Pref::Server::FASTKarts::LoadCustomMusic $= "")
-		$Pref::Server::FASTKarts::LoadCustomMusic = false;
-	
 	//addons to load after gamemode execution, only works with addons that have a server.cs, and that's executed directly.
 	if($Pref::Server::FASTKarts::LoadAddon1 $= "")
 		$Pref::Server::FASTKarts::LoadAddon1 = "";
@@ -251,7 +267,7 @@ function FK_LoadPrefs()
 	if($Pref::Server::FASTKarts::LoadAddon10 $= "")
 		$Pref::Server::FASTKarts::LoadAddon10 = "";
 	
-	$FK::Version = 10;
+	$FK::Version = 11;
 }
 
 function FK_RegisterRTBPrefs()
@@ -263,6 +279,11 @@ function FK_RegisterRTBPrefs()
 	
 	RTB_registerPref("Load tracks in random order",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::RandomTracks",		"bool",									"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Allow player track voting",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::EnableTrackVoting",	"list Disallow 0 Allow 1 Round_Only 2",	"GameMode_FASTKarts",	1,		false,	false,	false);
+	
+	RTB_registerPref("Enable /boombox /stereo /music /setmusic commands",	"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableBoombox",			"bool",	"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Load music from Custom GameMode",						"FASTKarts - Music",	"$Pref::Server::FASTKarts::LoadCustomMusic",		"bool",	"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Play global music (change with \"/music server\")",	"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableGlobalMusic",		"bool",	"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Announce when global music changes",					"FASTKarts - Music",	"$Pref::Server::FASTKarts::AnnounceGlobalMusic",	"bool",	"GameMode_FASTKarts",	true,	false,	false,	false);
 	
 	RTB_registerPref("Show tip every X seconds (-1 disables)",	"FASTKarts - Tips",	"$Pref::Server::FASTKarts::TipSeconds",	"int -1 99999",	"GameMode_FASTKarts",	60,	false,	false,	false);
 	
@@ -317,7 +338,6 @@ function FK_RegisterRTBPrefs()
 		RTB_registerPref("Allow SuperKart Plane",			"FASTKarts - Allowed Karts",	"$Pref::Server::FASTKarts::AllowSuperPlane",	"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
 	}
 	
-	RTB_registerPref("Load music from Custom GameMode",	"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadCustomMusic",	"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
 	RTB_registerPref("First add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon1",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
 	RTB_registerPref("Second add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon2",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);
 	RTB_registerPref("Third add-on to load",			"FASTKarts - AddOns (advanced users only)",	"$Pref::Server::FASTKarts::LoadAddon3",			"string 200",	"GameMode_FASTKarts",	"",		true,	false,	false);

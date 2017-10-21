@@ -303,7 +303,7 @@ function FK_RegisterRTBPrefs()
 	RTB_registerPref("Force only tracks with this origin to load",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::ForceTrackOrigin",	"list Any_Origin 0 SpeedKart 1 SuperKart 2 FASTKarts 3",	"GameMode_FASTKarts",	0,		false,	false,	false);
 	RTB_registerPref("Allow player track voting",					"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::EnableTrackVoting",	"list Disallow 0 Allow 1 Round_Only 2",						"GameMode_FASTKarts",	1,		false,	false,	false);
 	
-	RTB_registerPref("Enable /boombox /stereo /music /setmusic commands",	"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableBoombox",			"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Allow players to play music (/boombox)",				"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableBoombox",			"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Load music from Custom GameMode",						"FASTKarts - Music",	"$Pref::Server::FASTKarts::LoadCustomMusic",		"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Play global music (change with \"/music server\")",	"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableGlobalMusic",		"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Obey track's music setting",							"FASTKarts - Music",	"$Pref::Server::FASTKarts::ObeyTrackMusic",			"list No 0 Only_First_Round 1 All_Rounds 2",	"GameMode_FASTKarts",	2,		false,	false,	false);

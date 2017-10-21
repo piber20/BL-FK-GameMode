@@ -39,7 +39,6 @@ function FK_BuildTrackList()
 			%configFile.delete();
 		}
 		
-		echo("origin = " @ %origin);
 		if(%origin !$= "")
 		{
 			%origin = strReplace(%origin, "_", " ");
@@ -47,14 +46,11 @@ function FK_BuildTrackList()
 		}
 		else
 			$FK::TrackOrigin[$FK::numTracks] = "FASTKarts";
-		echo("track origin = " @ $FK::TrackOrigin[$FK::numTracks]);
 
-		echo("type = " @ %type);
-		if(%type $= "Campaign" || %type $= "Lapped" || %type $= "Battle")
+		if(%type $= "Campaign" || %type $= "Lapped" || %type $= "Battle") //battle is currently unused, does absolutely nothing
 			$FK::TrackType[$FK::numTracks] = %type;
 		else
 			$FK::TrackType[$FK::numTracks] = "Campaign";
-		echo("track type = " @ $FK::TrackType[$FK::numTracks]);
 		
 		$FK::numTracks++;
 		%file = findNextFile(%pattern);
@@ -67,6 +63,7 @@ function FK_NextTrack()
 	
 	echo("Loading next track...");
 	$FK::ResetCount = 0;
+	$FK::FinalLap = "?";
 	
 	if(($Pref::Server::FASTKarts::RandomTracks && !$FK::BypassRandom) || $FK::ForceRandom)
 	{

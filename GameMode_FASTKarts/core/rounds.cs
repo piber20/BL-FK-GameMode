@@ -35,6 +35,7 @@ function fxDTSBrick::explodeNearVehicle(%obj)
 //special event to win the race, displays race time
 function GameConnection::winRace(%client, %laps)
 {
+	$FK::FinalLap = %laps;
 	%mg = %client.miniGame;
 
 	if(!isObject(%mg))
@@ -67,7 +68,8 @@ function GameConnection::winRace(%client, %laps)
 	if(%laps < 1)
 		%laps = 1;
 	
-	%client.FASTKartsLap++;
+	%vehicle.FASTKartsLap++;
+	%client.FASTKartsLap = %vehicle.FASTKartsLap;
 	if(%client.FASTKartsLap > %laps)
 	{
 		SM_StopSong();
@@ -82,6 +84,7 @@ function GameConnection::winRace(%client, %laps)
 		for(%i = 0; %i < getWordCount($FK::onWinRaceList); %i++)
 		{
 			%brick = getWord($FK::onWinRaceList, %i);
+			%brick.checkHasOnWinRaceEvent();
 			if(isObject(%brick))
 			{
 				$inputTarget_Self = %brick;
@@ -112,30 +115,42 @@ function fxDTSBrick::checkHasOnWinRaceEvent(%this)
 	if(!isObject(%this))
 	{
 		$FK::onWinRaceList = removeItemFromList($FK::onWinRaceList, %this);
-		return;
+		%this.addedToOnWinRaceList = false;
+		return false;
 	}
 	if(%this.numEvents <= 0)
 	{
 		$FK::onWinRaceList = removeItemFromList($FK::onWinRaceList, %this);
-		return;
+		%this.addedToOnWinRaceList = false;
+		return false;
 	}
 	
 	for(%i = 0; %i < %this.numEvents; %i++)
 	{
 		%input = %this.eventInput[%i];
-		
 		if(%input $= "onWinRace")
 			%onWinRaceEvents++;
+		
+		%output = %this.eventOutput[%i];
+		if(%output $= "winRace")
+		{
+			%laps = %this.eventOutputParameter[%i, 1];
+			$FK::FinalLap = %laps;
+		}
 	}
 	
 	if(%onWinRaceEvents > 0)
 	{
-		$FK::onWinRaceList = addItemToList($FK::onWinRaceList, %this);
+		if(!%this.addedToOnWinRaceList)
+			$FK::onWinRaceList = addItemToList($FK::onWinRaceList, %this);
+		
+		%this.addedToOnWinRaceList = true;
 		return true;
 	}
 	else
 	{
 		$FK::onWinRaceList = removeItemFromList($FK::onWinRaceList, %this);
+		%this.addedToOnWinRaceList = false;
 		return false;
 	}
 }

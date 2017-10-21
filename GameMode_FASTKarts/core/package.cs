@@ -177,7 +177,7 @@ package GameModeFASTKartsPackage
 			%doBuzzer = false;
 			if(%vehicle.getClassName() $= "AIPlayer")
 				%doBuzzer = true;
-			else if(!%vehicle.getWheelPowered(2) || %elapsedTime <  $FK::SuicideBufferTime )
+			else if(!%vehicle.getWheelPowered(2) || %elapsedTime < $FK::SuicideBufferTime)
 				%doBuzzer = true;
 			
 			if(%doBuzzer)
@@ -319,7 +319,6 @@ package GameModeFASTKartsPackage
 						%play = "musicData_" @ %music;
 						%play = strReplace(%play, "-", "DASH");
 						%play = strReplace(%play, "'", "APOS");
-						echo("play =" @ %play);
 						
 						if(!isObject(%play) || %music $= "")
 						{
@@ -329,12 +328,13 @@ package GameModeFASTKartsPackage
 								if(%datablock.getClassName() $= "AudioProfile" && %datablock.uiName !$= "")
 									%song[%songCount++] = %datablock;
 							}
-							%randomsong = getRandom(0,%songCount);
+							%randomsong = getRandom(0, %songCount);
 							%play = %song[%randomsong];
 						}
 						
 						%play = %play.getName();
-						SM_PlaySong("", %play);
+						if(isObject(%play))
+							SM_PlaySong("", %play);
 					}
 				}
 			}
@@ -421,20 +421,6 @@ package GameModeFASTKartsPackage
 		}
 
 		FK_ResetSuicideGambling();
-	}
-   
-	function serverCmdAddEvent(%client, %delay, %input, %target, %a, %b, %output, %para1, %para2, %para3, %para4)
-	{
-		Parent::serverCmdAddEvent(%client, %delay, %input, %target, %a, %b, %output, %para1, %para2, %para3, %para4);
-		%client.wrenchbrick.checkHasOnWinRaceEvent();
-		//if(%client.wrenchbrick.checkHasOnWinRaceEvent())
-		//{
-		//	if(%input $= "onWinRace")
-		//	{
-		//		$FK::FinalLap = mfloor(%para1);
-		//		echo("found amount of laps: " @ $FK::FinalLap);
-		//	}
-		//}
 	}
 	
 	function fxDtsBrick::onPlant(%this)
@@ -805,6 +791,9 @@ package GameModeFASTKartsPackage
 			centerPrint(%client, %text, 12);
 			%client.FK_LastKartUsed = %data;
 			%client.FK_RoundIdleCounter = 0;
+			if(%vehicle.FASTKartsLap <= $FK::StartingLap)
+				%vehicle.FASTKartsLap = $FK::StartingLap;
+			%client.FASTKartsLap = %vehicle.FASTKartsLap;
 		}
 	}
 	

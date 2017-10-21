@@ -102,7 +102,7 @@ function gameConnection::FK_setBottomPrintInfo(%this)
 						centerPrint(%this, %color @ "This is a Bouncy round. No karts allowed!", 1);
 					else if(!%this.FK_HasSpawnedSpeedKart)
 						centerPrint(%this, %color @ "Spawn a vehicle by clicking the vehicle spawn and choosing a vehicle.", 1);
-					else if(%this.FK_LastKartUsed $= "")
+					else if(!isObject(%this.player.getObjectMount()))
 						centerPrint(%this, %color @ "Enter a vehicle by jumping on top of it.", 1);
 				}
 				else
@@ -116,8 +116,8 @@ function gameConnection::FK_setBottomPrintInfo(%this)
 		%this.FKBottomPrint = %this.FKBottomPrint @ "<just:right>";
 		
 		//laps
-		if(!$FK::TrackCompleted && mfloor(%this.FASTKartsLap) != 0)
-			%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Lap" @ %color @ ": " @ %this.FASTKartsLap @ " ";// @ "/" @ $FK::FinalLap @ " ";
+		if(!$FK::TrackCompleted && !$FK::TrackStarted && $FK::TrackType[$FK::CurrentTrack] $= "Lapped")
+			%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Lap" @ %color @ ": " @ %this.FASTKartsLap @ "/" @ $FK::FinalLap @ " ";
 		
 		//next line
 		%this.FKBottomPrint = %this.FKBottomPrint @ "<br><just:left>";

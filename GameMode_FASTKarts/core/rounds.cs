@@ -84,7 +84,6 @@ function GameConnection::winRace(%client, %laps)
 		for(%i = 0; %i < getWordCount($FK::onWinRaceList); %i++)
 		{
 			%brick = getWord($FK::onWinRaceList, %i);
-			%brick.checkHasOnWinRaceEvent();
 			if(isObject(%brick))
 			{
 				$inputTarget_Self = %brick;

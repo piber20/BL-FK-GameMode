@@ -80,6 +80,9 @@ function serverCmdDTrackInfo(%client)
 	else
 		messageClient(%client, '', "\c5Track has no envirnoment");
 	messageClient(%client, '', "\c6Starting lap is \c3" @ $FK::StartingLap);
+	messageClient(%client, '', "\c6Music is " @ $FK::trackMusic);
+	messageClient(%client, '', "\c6Origin is " @ $FK::TrackOrigin[$FK::CurrentTrack]);
+	messageClient(%client, '', "\c6Type is " @ $FK::TrackType[$FK::CurrentTrack]);
 }
 
 function FK_DumpTrackInfo()
@@ -100,6 +103,9 @@ function FK_DumpTrackInfo()
 	else
 		echo("Track has no envirnoment");
 	echo("Starting lap is " @ $FK::StartingLap);
+	echo("Music is " @ $FK::trackMusic);
+	echo("Origin is " @ $FK::TrackOrigin[$FK::CurrentTrack]);
+	echo("Type is " @ $FK::TrackType[$FK::CurrentTrack]);
 }
 
 function serverCmdDFakeClient(%client)

@@ -33,6 +33,7 @@ function serverCmdSetRound(%client, %i)
 	
 	messageAll('MsgAdminForce', '\c3%1\c2 changed the round to \c3round %2\c2.', %client.getPlayerName(), %i);
 	
+	SM_StopSong();
 	$FK::ResetCount = %i - 1;
 	$DefaultMiniGame.scheduleReset();
 }
@@ -62,6 +63,7 @@ function serverCmdNextRound(%client)
 		}
 	}
 	
+	SM_StopSong();
 	$DefaultMiniGame.scheduleReset();
 }
 
@@ -89,8 +91,11 @@ function serverCmdSetTrack(%client, %i)
 	
 	messageAll('MsgAdminForce', '\c3%1\c2 set the track to \c3%2\c2.', %client.getPlayerName(), FK_getTrackName(%i));
 	
+	SM_StopSong();
 	$FK::CurrentTrack = %i - 1;
 	$FK::BypassRandom = true;
+	$FK::BypassOrigin = true;
+	$FK::BypassType = true;
 	FK_NextTrack();
 }
 
@@ -106,6 +111,7 @@ function serverCmdNextTrack(%client, %i)
 	
 	messageAll( 'MsgAdminForce', '\c3%1\c2 skipped the track', %client.getPlayerName());
 	
+	SM_StopSong();
 	FK_NextTrack();
 }
 function serverCmdNextMap(%client, %i)
@@ -141,6 +147,7 @@ function serverCmdRandomTrack(%client)
 		}
 	}
 	
+	SM_StopSong();
 	$FK::ForceRandom = true;
 	schedule(3000, 0, FK_NextTrack);
 }
@@ -175,6 +182,45 @@ function serverCmdVoteTrack(%client, %i)
 	{
 		messageClient(%client, '', "You're playing in that track right now.");
 		return;
+	}
+	
+	if($Pref::Server::FASTKarts::ForceTrackOrigin == 1)
+		%origin = "SpeedKart";
+	if($Pref::Server::FASTKarts::ForceTrackOrigin == 2)
+		%origin = "SuperKart";
+	if($Pref::Server::FASTKarts::ForceTrackOrigin == 3)
+		%origin = "FASTKarts";
+	
+	if($Pref::Server::FASTKarts::ForceTrackType == 1)
+		%type = "Campaign";
+	if($Pref::Server::FASTKarts::ForceTrackType == 2)
+		%type = "Lapped";
+	if($Pref::Server::FASTKarts::ForceTrackType == 3)
+		%type = "Battle";
+	
+	if($Pref::Server::FASTKarts::ForceTrackOrigin > 0 && $Pref::Server::FASTKarts::ForceTrackType > 0)
+	{
+		if($FK::TrackOrigin[%i] !$= %origin || $FK::TrackType[%i] !$= %type)
+		{
+			messageClient(%client, '', "You cannot vote for that track.");
+			return;
+		}
+	}
+	else if($Pref::Server::FASTKarts::ForceTrackOrigin > 0)
+	{
+		if($FK::TrackOrigin[%i] !$= %origin)
+		{
+			messageClient(%client, '', "You cannot vote for that track.");
+			return;
+		}
+	}
+	else if($Pref::Server::FASTKarts::ForceTrackType > 0)
+	{
+		if($FK::TrackType[%i] !$= %type)
+		{
+			messageClient(%client, '', "You cannot vote for that track.");
+			return;
+		}
 	}
 
 	if(mfloor(%i) < 0)
@@ -290,6 +336,7 @@ function FK_CheckVotes()
 			}
 		}
 		
+		SM_StopSong();
 		$FK::CurrentTrack = $FK::VoteTrack - 1;
 		$FK::BypassRandom = true;
 		schedule(3000, 0, FK_NextTrack);

@@ -26,7 +26,7 @@ function fxDTSBrick::explodeNearVehicle(%obj)
 	if(vectorLen(%delta) < 5) //7.5)
 	{
 		%vehicle.finalExplosion(); //damage(%vehicle, %vehicle.getPosition(), 10000, $DamageType::Default);
-		%client = %vehicle.getControllingClient()
+		%client = %vehicle.getControllingClient();
 		if(isObject(%client))
 			%client.FK_LastKartUsed = ""; //so the idle kicker will kick people who are intentionally stalling the server by spawning a kart, going in it, and not moving
 	}
@@ -70,6 +70,7 @@ function GameConnection::winRace(%client, %laps)
 	%client.FASTKartsLap++;
 	if(%client.FASTKartsLap > %laps)
 	{
+		SM_StopSong();
 		$FK::TrackCompleted = true;
 		%client.FKWinner = true;
 		%mg.chatMessageAll(0, "\c3" @ %client.getPlayerName() @ " \c5WON THE RACE IN \c6" @ FK_getTimeLeft(%mg, true) @ "\c5!");
@@ -223,21 +224,42 @@ function FK_doTimeRecord(%mg)
 				%string = getTimeString(%oldSeconds);
 			}
 			
+			if(FK_getRoundTypesAllowed() > 1)
+			{
+				if($FK::RoundType $= "NORMAL")
+				{
+					%typeString = " in the \c3Normal\c5 round type";
+					%color = "\c3";
+				}
+				if($FK::RoundType $= "ROCKET")
+				{
+					%typeString = " in the \c0Rocket\c5 round type";
+					%color = "\c0";
+				}
+				if($FK::RoundType $= "BOUNCY")
+				{
+					%typeString = " in the \c2Bouncy\c5 round type";
+					%color = "\c2";
+				}
+			}
+			else
+				%typeString = "";
+			
 			%oldBLID = $FK::Record_[%trackName, $FK::RoundType, "PlayerBLID"];
 			if(%oldRecord $= "" || %oldRecord == 0)
-				%mg.chatMessageAll(0, "\c5They set a new server-wide record!");
+				%mg.chatMessageAll(0, "\c5They set a new server-wide record" @ %typeString @ "!");
 			else if(%oldBLID $= "")
-				%mg.chatMessageAll(0, "\c5They beat the server-wide record of \c3" @ %string @ "\c5!");
+				%mg.chatMessageAll(0, "\c5They beat the server-wide record of " @ %color @ %string @ "\c5" @ %typeString @ "!");
 			else if(%oldBLID == $FK::WinnerBLID)
-				%mg.chatMessageAll(0, "\c5They beat their own server-wide record of \c3" @ %string @ "\c5!");
+				%mg.chatMessageAll(0, "\c5They beat their own server-wide record of " @ %color @ %string @ "\c5" @ %typeString @ "!");
 			else
 			{
 				%oldName = $FK::Record_[%trackName, $FK::RoundType, "PlayerName"];
 				
 				if(%oldName $= "")
-					%mg.chatMessageAll(0, "\c5They beat \c1BL_ID: " @ %oldBLID @ "\c5's server-wide record of \c3" @ %string @ "\c5!");
+					%mg.chatMessageAll(0, "\c5They beat \c1BL_ID: " @ %oldBLID @ "\c5's server-wide record of " @ %color @ %string @ "\c5" @ %typeString @ "!");
 				else
-					%mg.chatMessageAll(0, "\c5They beat \c3" @ %oldName @ "\c5's server-wide record of \c3" @ %string @ "\c5!");
+					%mg.chatMessageAll(0, "\c5They beat " @ %color @ %oldName @ "\c5's server-wide record of " @ %color @ %string @ "\c5" @ %typeString @ "!");
 			}
 		}
 		

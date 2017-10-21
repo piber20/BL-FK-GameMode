@@ -78,6 +78,14 @@ package GameModeFASTKartsPackage
 	//record players who died if they never entered a kart and kick them
 	function gameConnection::onDeath(%this, %killerPlayer, %killer, %damageType, %a)
 	{
+		parent::onDeath(%this, %killerPlayer, %killer, %damageType, %a);
+		
+		if(%this.minigame != $DefaultMinigame)
+			return;
+		
+		if(%this.isAdmin)
+			return;
+		
 		if(%this.FK_LastKartUsed $= "")
 			%this.FK_RoundIdleCounter++;
 		
@@ -94,8 +102,6 @@ package GameModeFASTKartsPackage
 				%this.FK_RoundIdleWarned = true;
 			}
 		}
-		
-		parent::onDeath(%this, %killerPlayer, %killer, %damageType, %a);
 	}
 	
 	//when vehicle spawns, it cannot move (event must enable it)
@@ -313,6 +319,7 @@ package GameModeFASTKartsPackage
 						%play = "musicData_" @ %music;
 						%play = strReplace(%play, "-", "DASH");
 						%play = strReplace(%play, "'", "APOS");
+						echo("play =" @ %play);
 						
 						if(!isObject(%play) || %music $= "")
 						{
@@ -326,7 +333,8 @@ package GameModeFASTKartsPackage
 							%play = %song[%randomsong];
 						}
 						
-						SM_PlaySong("", %play)
+						%play = %play.getName();
+						SM_PlaySong("", %play);
 					}
 				}
 			}
@@ -335,6 +343,8 @@ package GameModeFASTKartsPackage
 	
 	function MiniGameSO::Reset(%obj, %client)
 	{
+		SM_StopSong();
+		
 		//make sure this value is an number
 		$Pref::Server::FASTKarts::RoundLimit = mFloor($Pref::Server::FASTKarts::RoundLimit);
 
@@ -794,7 +804,7 @@ package GameModeFASTKartsPackage
 			
 			centerPrint(%client, %text, 12);
 			%client.FK_LastKartUsed = %data;
-			%client.FK_RoundIdleCounter = 0
+			%client.FK_RoundIdleCounter = 0;
 		}
 	}
 	

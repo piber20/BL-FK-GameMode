@@ -39,6 +39,7 @@ function FK_BuildTrackList()
 			%configFile.delete();
 		}
 		
+		echo("origin = " @ %origin);
 		if(%origin !$= "")
 		{
 			%origin = strReplace(%origin, "_", " ");
@@ -46,14 +47,14 @@ function FK_BuildTrackList()
 		}
 		else
 			$FK::TrackOrigin[$FK::numTracks] = "FASTKarts";
+		echo("track origin = " @ $FK::TrackOrigin[$FK::numTracks]);
 
-		if(%type !$= "Campaign" && %type !$= "Lapped" && %type !$= "Battle")
-		{
-			%type = strReplace(%type, "_", " ");
+		echo("type = " @ %type);
+		if(%type $= "Campaign" || %type $= "Lapped" || %type $= "Battle")
 			$FK::TrackType[$FK::numTracks] = %type;
-		}
 		else
 			$FK::TrackType[$FK::numTracks] = "Campaign";
+		echo("track type = " @ $FK::TrackType[$FK::numTracks]);
 		
 		$FK::numTracks++;
 		%file = findNextFile(%pattern);
@@ -62,6 +63,8 @@ function FK_BuildTrackList()
 
 function FK_NextTrack()
 {
+	SM_StopSong();
+	
 	echo("Loading next track...");
 	$FK::ResetCount = 0;
 	
@@ -77,23 +80,24 @@ function FK_NextTrack()
 	}
 	$FK::BypassRandom = false;
 	
+	if($Pref::Server::FASTKarts::ForceTrackOrigin == 1)
+		%origin = "SpeedKart";
+	if($Pref::Server::FASTKarts::ForceTrackOrigin == 2)
+		%origin = "SuperKart";
+	if($Pref::Server::FASTKarts::ForceTrackOrigin == 3)
+		%origin = "FASTKarts";
+	
+	if($Pref::Server::FASTKarts::ForceTrackType == 1)
+		%type = "Campaign";
+	if($Pref::Server::FASTKarts::ForceTrackType == 2)
+		%type = "Lapped";
+	if($Pref::Server::FASTKarts::ForceTrackType == 3)
+		%type = "Battle";
+	
 	if($Pref::Server::FASTKarts::ForceTrackOrigin > 0 && !$FK::BypassOrigin && $Pref::Server::FASTKarts::ForceTrackType > 0 && !$FK::BypassType)
 	{
 		for(%a = 0; %a < $FK::numTracks; %a++)
 		{
-			if($Pref::Server::FASTKarts::ForceTrackOrigin == 1)
-				%origin = "SpeedKart";
-			if($Pref::Server::FASTKarts::ForceTrackOrigin == 2)
-				%origin = "SuperKart";
-			if($Pref::Server::FASTKarts::ForceTrackOrigin == 3)
-				%origin = "FASTKarts";
-			
-			if($Pref::Server::FASTKarts::ForceTrackType == 1)
-				%type = "Campaign";
-			if($Pref::Server::FASTKarts::ForceTrackType == 2)
-				%type = "Lapped";
-			if($Pref::Server::FASTKarts::ForceTrackType == 3)
-				%type = "Battle";
 			
 			if($FK::TrackOrigin[%a] $= %origin && $FK::TrackType[%a] $= %type)
 			{
@@ -136,17 +140,10 @@ function FK_NextTrack()
 	}
 	else
 	{
-		if($Pref::Server::FASTKarts::ForceTrackOrigin !$= "" && !$FK::BypassOrigin)
+		if($Pref::Server::FASTKarts::ForceTrackOrigin > 0 && !$FK::BypassOrigin)
 		{
 			for(%a = 0; %a < $FK::numTracks; %a++)
 			{
-				if($Pref::Server::FASTKarts::ForceTrackOrigin == 1)
-					%origin = "SpeedKart";
-				if($Pref::Server::FASTKarts::ForceTrackOrigin == 2)
-					%origin = "SuperKart";
-				if($Pref::Server::FASTKarts::ForceTrackOrigin == 3)
-					%origin = "FASTKarts";
-				
 				if($FK::TrackOrigin[%a] $= %origin)
 				{
 					%originExists = true;
@@ -185,17 +182,10 @@ function FK_NextTrack()
 		
 		$FK::BypassOrigin = false;
 		
-		if($Pref::Server::FASTKarts::ForceTrackType !$= "" && !$FK::BypassType)
+		if($Pref::Server::FASTKarts::ForceTrackType > 0 && !$FK::BypassType)
 		{
 			for(%b = 0; %b < $FK::numTracks; %b++)
 			{
-				if($Pref::Server::FASTKarts::ForceTrackType == 1)
-					%type = "Campaign";
-				if($Pref::Server::FASTKarts::ForceTrackType == 2)
-					%type = "Lapped";
-				if($Pref::Server::FASTKarts::ForceTrackType == 3)
-					%type = "Battle";
-				
 				if($FK::TrackType[%b] $= %type)
 				{
 					%typeExists = true;
@@ -283,7 +273,7 @@ function FK_LoadTrack_Phase1(%filename)
 function FK_LoadTrack_Phase2(%filename)
 {
 	echo("Loading fastkarts track from " @ %filename);
-	%loadMsg = "\c5Now loading " @ $FK::TrackTheme[$FK::CurrentTrack] SPC $FK::TrackSort[$FK::CurrentTrack] @ " track \c6" @ FK_getTrackName(%filename, 1);
+	%loadMsg = "\c5Now loading " @ $FK::TrackType[$FK::CurrentTrack] SPC $FK::TrackOrigin[$FK::CurrentTrack] @ " track \c6" @ FK_getTrackName(%filename, 1);
 	
 	//load config file
 	$FK::StartingLap = 1;

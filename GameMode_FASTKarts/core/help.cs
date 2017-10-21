@@ -205,21 +205,32 @@ function serverCmdTrackRecord(%client, %i)
 		if(isObject(%kartNormal))
 			%kartStringNormal = " with the \c3" @ %kartNormal.uiName @ "\c6";
 		
-		if(%timeNormal $= "" || %timeNormal == 0)
-			messageClient(%client, '', "\c6There is no server-wide record for \c3" @ FK_getTrackName(%i) @ "\c6.");
-		else if(%blidNormal $= "")
-			messageClient(%client, '', "\c6The current server-wide record for \c3" @ FK_getTrackName(%i) @ "\c6 was done in \c3" @ %stringNormal @ "\c6" @ %kartStringNormal @ ".");
-		else if(%nameNormal $= "")
-			messageClient(%client, '', "\c6The current server-wide record for \c3" @ FK_getTrackName(%i) @ "\c6 was done in \c3" @ %stringNormal @ "\c6 by \c1BL_ID: " @ %blidNormal @ "\c6" @ %kartStringNormal @ ".");
+		if(FK_getRoundTypesAllowed() > 1)
+		{
+			%typeString1Normal = " in the \c3Normal\c6 round type";
+			%typeString2Normal = "In the \c3Normal\c6 round type, t";
+		}
 		else
-			messageClient(%client, '', "\c6The current server-wide record for \c3" @ FK_getTrackName(%i) @ "\c6 was done in \c3" @ %stringNormal @ "\c6 by \c3" @ %nameNormal @ "\c6" @ %kartStringNormal @ ".");
+		{
+			%typeString1Normal = "";
+			%typeString2Normal = "T";
+		}
+		
+		if(%timeNormal $= "" || %timeNormal == 0)
+			messageClient(%client, '', "\c6There is no server-wide record for \c3" @ FK_getTrackName(%i) @ "\c6" @ %typeString1Normal @ ".");
+		else if(%blidNormal $= "")
+			messageClient(%client, '', "\c6" @ %typeString2Normal @ "he current server-wide record for \c3" @ FK_getTrackName(%i) @ "\c6 was done in \c3" @ %stringNormal @ "\c6" @ %kartStringNormal @ ".");
+		else if(%nameNormal $= "")
+			messageClient(%client, '', "\c6" @ %typeString2Normal @ "he current server-wide record for \c3" @ FK_getTrackName(%i) @ "\c6 was done in \c3" @ %stringNormal @ "\c6 by \c1BL_ID: " @ %blidNormal @ "\c6" @ %kartStringNormal @ ".");
+		else
+			messageClient(%client, '', "\c6" @ %typeString2Normal @ "he current server-wide record for \c3" @ FK_getTrackName(%i) @ "\c6 was done in \c3" @ %stringNormal @ "\c6 by \c3" @ %nameNormal @ "\c6" @ %kartStringNormal @ ".");
 	}
 	if($Pref::Server::FASTKarts::RocketRounds)
 	{
 		%timeRocket = $FK::Record_[%trackName, "ROCKET", "Time"];
 		%nameRocket = $FK::Record_[%trackName, "ROCKET", "PlayerName"];
 		%blidRocket = $FK::Record_[%trackName, "ROCKET", "PlayerBLID"];
-		%kartRocket = $FK::Record_[%trackName, "NORMAL", "Kart"];
+		%kartRocket = $FK::Record_[%trackName, "ROCKET", "Kart"];
 		
 		if($Pref::Server::FASTKarts::ShowMilliseconds)
 			%stringRocket = FK_getFullTimeString(%timeRocket);
@@ -233,14 +244,25 @@ function serverCmdTrackRecord(%client, %i)
 		if(isObject(%kartRocket))
 			%kartStringRocket = " with the \c0" @ %kartRocket.uiName @ "\c6";
 		
-		if(%timeRocket $= "" || %timeRocket == 0)
-			messageClient(%client, '', "\c6There is no server-wide record for \c0" @ FK_getTrackName(%i) @ "\c6 in the \c0Rocket\c6 round type.");
-		else if(%blidRocket $= "")
-			messageClient(%client, '', "\c6In the \c0Rocket\c6 round type, the current server-wide record for \c0" @ FK_getTrackName(%i) @ "\c6 was done in \c0" @ %stringRocket @ "\c6" @ %kartStringRocket @ ".");
-		else if(%nameRocket $= "")
-			messageClient(%client, '', "\c6In the \c0Rocket\c6 round type, the current server-wide record for \c0" @ FK_getTrackName(%i) @ "\c6 was done in \c0" @ %stringRocket @ "\c6 by \c1BL_ID: " @ %blidRocket @ "\c6" @ %kartStringRocket @ ".");
+		if(FK_getRoundTypesAllowed() > 1)
+		{
+			%typeString1Rocket = " in the \c0Rocket\c6 round type";
+			%typeString2Rocket = "In the \c0Rocket\c6 round type, t";
+		}
 		else
-			messageClient(%client, '', "\c6In the \c0Rocket\c6 round type, the current server-wide record for \c0" @ FK_getTrackName(%i) @ "\c6 was done in \c0" @ %stringRocket @ "\c6 by \c0" @ %nameRocket @ "\c6" @ %kartStringRocket @ ".");
+		{
+			%typeString1Rocket = "";
+			%typeString2Rocket = "T";
+		}
+		
+		if(%timeRocket $= "" || %timeRocket == 0)
+			messageClient(%client, '', "\c6There is no server-wide record for \c0" @ FK_getTrackName(%i) @ "\c6" @ %typeString1Rocket @ ".");
+		else if(%blidRocket $= "")
+			messageClient(%client, '', "\c6" @ %typeString2Rocket @ "he current server-wide record for \c0" @ FK_getTrackName(%i) @ "\c6 was done in \c0" @ %stringRocket @ "\c6" @ %kartStringRocket @ ".");
+		else if(%nameRocket $= "")
+			messageClient(%client, '', "\c6" @ %typeString2Rocket @ "he current server-wide record for \c0" @ FK_getTrackName(%i) @ "\c6 was done in \c0" @ %stringRocket @ "\c6 by \c1BL_ID: " @ %blidRocket @ "\c6" @ %kartStringRocket @ ".");
+		else
+			messageClient(%client, '', "\c6" @ %typeString2Rocket @ "he current server-wide record for \c0" @ FK_getTrackName(%i) @ "\c6 was done in \c0" @ %stringRocket @ "\c6 by \c0" @ %nameRocket @ "\c6" @ %kartStringRocket @ ".");
 	}
 	if($Pref::Server::FASTKarts::BouncyRounds)
 	{
@@ -256,14 +278,25 @@ function serverCmdTrackRecord(%client, %i)
 			%stringBouncy = getTimeString(%secondsBouncy);
 		}
 		
-		if(%timeBouncy $= "" || %timeBouncy == 0)
-			messageClient(%client, '', "\c6There is no server-wide record for \c2" @ FK_getTrackName(%i) @ "\c6 in the \c2Bouncy\c6 round type.");
-		else if(%blidBouncy $= "")
-			messageClient(%client, '', "\c6In the \c2Bouncy\c6 round type, the current server-wide record for \c2" @ FK_getTrackName(%i) @ "\c6 was done in \c2" @ %stringBouncy @ "\c6.");
-		else if(%nameBouncy $= "")
-			messageClient(%client, '', "\c6In the \c2Bouncy\c6 round type, the current server-wide record for \c2" @ FK_getTrackName(%i) @ "\c6 was done in \c2" @ %stringBouncy @ "\c6 by \c1BL_ID: " @ %blidBouncy @ "\c6.");
+		if(FK_getRoundTypesAllowed() > 1)
+		{
+			%typeString1Bouncy = " in the \c2Bouncy\c6 round type";
+			%typeString2Bouncy = "In the \c2Bouncy\c6 round type, t";
+		}
 		else
-			messageClient(%client, '', "\c6In the \c2Bouncy\c6 round type, the current server-wide record for \c2" @ FK_getTrackName(%i) @ "\c6 was done in \c2" @ %stringBouncy @ "\c6 by \c2" @ %nameBouncy @ "\c6.");
+		{
+			%typeString1Bouncy = "";
+			%typeString2Bouncy = "T";
+		}
+		
+		if(%timeBouncy $= "" || %timeBouncy == 0)
+			messageClient(%client, '', "\c6There is no server-wide record for \c2" @ FK_getTrackName(%i) @ "\c6" @ %typeString1Bouncy @ ".");
+		else if(%blidBouncy $= "")
+			messageClient(%client, '', "\c6" @ %typeString2Bouncy @ "he current server-wide record for \c2" @ FK_getTrackName(%i) @ "\c6 was done in \c2" @ %stringBouncy @ "\c6.");
+		else if(%nameBouncy $= "")
+			messageClient(%client, '', "\c6" @ %typeString2Bouncy @ "he current server-wide record for \c2" @ FK_getTrackName(%i) @ "\c6 was done in \c2" @ %stringBouncy @ "\c6 by \c1BL_ID: " @ %blidBouncy @ "\c6.");
+		else
+			messageClient(%client, '', "\c6" @ %typeString2Bouncy @ "he current server-wide record for \c2" @ FK_getTrackName(%i) @ "\c6 was done in \c2" @ %stringBouncy @ "\c6 by \c2" @ %nameBouncy @ "\c6.");
 	}
 }
 function serverCmdMapRecord(%client, %i)

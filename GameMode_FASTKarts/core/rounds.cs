@@ -96,6 +96,17 @@ function GameConnection::winRace(%client, %laps)
 	}
 	else
 	{
+		if(%client.FASTKartsLap == %laps)
+		{
+			if(!$FK::FinalLapReached)
+			{
+				$FK::FinalLapReached = true;
+				%mg.chatMessageAll(0, "\c3" @ %client.getPlayerName() @ " \c5reached the final lap!");
+				if($Pref::Server::FASTKarts::EnableGlobalMusic)
+					SM_PlaySong("", $SM::MusicPlaying, false, 1.2);
+			}
+		}
+		
 		if(%client.FASTKartsLap != 1)
 			messageClient(%client, '', "\c5Completed lap " @ %client.FASTKartsLap - 1 @ " of " @ %laps @ ".");
 		else
@@ -114,14 +125,12 @@ function fxDTSBrick::checkHasOnWinRaceEvent(%this)
 	if(!isObject(%this))
 	{
 		$FK::onWinRaceList = removeItemFromList($FK::onWinRaceList, %this);
-		%this.addedToOnWinRaceList = false;
-		return false;
+		return;
 	}
 	if(%this.numEvents <= 0)
 	{
 		$FK::onWinRaceList = removeItemFromList($FK::onWinRaceList, %this);
-		%this.addedToOnWinRaceList = false;
-		return false;
+		return;
 	}
 	
 	for(%i = 0; %i < %this.numEvents; %i++)
@@ -140,16 +149,12 @@ function fxDTSBrick::checkHasOnWinRaceEvent(%this)
 	
 	if(%onWinRaceEvents > 0)
 	{
-		if(!%this.addedToOnWinRaceList)
-			$FK::onWinRaceList = addItemToList($FK::onWinRaceList, %this);
-		
-		%this.addedToOnWinRaceList = true;
+		$FK::onWinRaceList = addItemToList($FK::onWinRaceList, %this);
 		return true;
 	}
 	else
 	{
 		$FK::onWinRaceList = removeItemFromList($FK::onWinRaceList, %this);
-		%this.addedToOnWinRaceList = false;
 		return false;
 	}
 }

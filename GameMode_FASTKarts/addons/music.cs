@@ -14,34 +14,43 @@
 //	Musical Functions
 function SM_StopSong()
 {
+	$SM::MusicPlaying = "";
 	if(isObject(SM_Music))
-	{
 		SM_Music.delete();
-	}
 }
 
-function SM_PlaySong(%client, %profile)
+function SM_PlaySong(%client, %profile, %announce, %pitch)
 {
-	if(!$Pref::Server::FASTKarts::EnableGlobalMusic)
-	{
-		SM_StopSong();
-		return;
-	}
+	SM_StopSong();
 	
-	if($Pref::Server::FASTKarts::AnnounceGlobalMusic)
+	if(!$Pref::Server::FASTKarts::EnableGlobalMusic)
+		return;
+	if(!isObject(%play))
+		return;
+	
+	%profile = %profile.getName();
+	$SM::MusicPlaying = %profile;
+	
+	if(%announce $= "")
+		%announce = $Pref::Server::FASTKarts::AnnounceGlobalMusic;
+	
+	%oldTimescale = getTimescale();
+	if(%pitch $= "")
+		%pitch = getTimescale();
+	
+	if(%announce)
 	{
 		%message = strReplace(%profile, "musicData_", "");
 		%message = strReplace(%message, "_", " ");
 		%message = strReplace(%message, "DASH", "-");
-		%message = strReplace(%message, "APOS", "'"); //not in original script
+		%message = strReplace(%message, "APOS", "'");
 		if(isObject(%client))
 			messageAll('', "\c4" @ %client.name SPC "\c6changed the song to\c4" SPC %message);
 		else
 			messageAll('', "\c6Now playing song\c4" SPC %message @ "\c6.");
 	}
 	
-	SM_StopSong();
-	
+	setTimescale(%pitch);
 	new AudioEmitter(SM_Music)
 	{
 		position = "0 0 0";
@@ -55,6 +64,7 @@ function SM_PlaySong(%client, %profile)
 		maxDistance = "9001";
 		isLooping = "1";
 	};
+	setTimescale(%oldTimescale);
 }
 
 //	Server Commands
@@ -92,9 +102,7 @@ function SM_PlaySong(%client, %profile)
 
 //	Package
 if(isPackage(ServerMusic))
-{
 	deactivatePackage(ServerMusic);
-}
 package ServerMusic
 {
 	function serverCmdSetWrenchData(%client,%data)
@@ -106,22 +114,17 @@ package ServerMusic
 				if(getWord(getField(%data,1),1) $= "0")
 				{
 					if(isObject(SM_Music))
-					{
 						messageAll('', "\c4" @ %client.name SPC "\c6stopped the music.");
-					}
+					
 					SM_StopSong();
 				}
 				else
-				{
 					SM_PlaySong(%client, getWord(getField(%data,1),1).getName());
-				}
 			}
 			%client.serverMusicHandler.delete();
 		}
 		else
-		{
 			Parent::serverCmdSetWrenchData(%client,%data);
-		}
 	}
 };
 activatePackage(ServerMusic);

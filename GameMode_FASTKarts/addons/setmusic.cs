@@ -14,10 +14,7 @@ function serverCmdsetmusic(%client, %arg)
 			return;
 		
 		if(!%client.isAdmin)
-		{
-			messageClient(%client, '', "\c6You are not an admin!");
 			return;
-		}
 		
 		if(isObject(%client.serverMusicHandler))
 			%client.serverMusicHandler.delete();

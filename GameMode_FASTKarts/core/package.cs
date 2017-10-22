@@ -332,9 +332,7 @@ package GameModeFASTKartsPackage
 							%play = %song[%randomsong];
 						}
 						
-						%play = %play.getName();
-						if(isObject(%play))
-							SM_PlaySong("", %play);
+						SM_PlaySong("", %play);
 					}
 				}
 			}
@@ -394,6 +392,7 @@ package GameModeFASTKartsPackage
 			messageAll('', $FK::RoundName);
 			$FK::TrackStarted = false;
 			$FK::TrackCompleted = false;
+			$FK::FinalLapReached = false;
 			Parent::Reset(%obj, %client);
 			
 			if($FK::numTracks == 0)
@@ -421,6 +420,12 @@ package GameModeFASTKartsPackage
 		}
 
 		FK_ResetSuicideGambling();
+	}
+   
+	function serverCmdAddEvent(%client, %delay, %input, %target, %a, %b, %output, %para1, %para2, %para3, %para4)
+	{
+		Parent::serverCmdAddEvent(%client, %delay, %input, %target, %a, %b, %output, %para1, %para2, %para3, %para4);
+		%client.wrenchbrick.checkHasOnWinRaceEvent();
 	}
 	
 	function fxDtsBrick::onPlant(%this)

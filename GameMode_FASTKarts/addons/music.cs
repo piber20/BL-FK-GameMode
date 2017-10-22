@@ -25,7 +25,7 @@ function SM_PlaySong(%client, %profile, %announce, %pitch)
 	
 	if(!$Pref::Server::FASTKarts::EnableGlobalMusic)
 		return;
-	if(!isObject(%play))
+	if(!isObject(%profile))
 		return;
 	
 	%profile = %profile.getName();
@@ -64,7 +64,7 @@ function SM_PlaySong(%client, %profile, %announce, %pitch)
 		maxDistance = "9001";
 		isLooping = "1";
 	};
-	setTimescale(%oldTimescale);
+	schedule(50, 0, "setTimescale", %oldTimescale);
 }
 
 //	Server Commands

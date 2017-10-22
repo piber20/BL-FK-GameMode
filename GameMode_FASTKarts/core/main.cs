@@ -116,7 +116,7 @@ function gameConnection::FK_setBottomPrintInfo(%this)
 		%this.FKBottomPrint = %this.FKBottomPrint @ "<just:right>";
 		
 		//laps
-		if(!$FK::TrackCompleted && $FK::TrackStarted && $FK::TrackType[$FK::CurrentTrack] $= "Lapped")
+		if(!$FK::TrackCompleted && $FK::TrackStarted && ($FK::TrackType[$FK::CurrentTrack] $= "Lapped" || $FK::FinalLap > 1))
 			%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Lap" @ %color @ ": " @ %this.FASTKartsLap @ "/" @ $FK::FinalLap @ " ";
 		
 		//next line

@@ -68,8 +68,15 @@ function GameConnection::winRace(%client, %laps)
 	if(%laps < 1)
 		%laps = 1;
 	
-	%vehicle.FASTKartsLap++;
-	%client.FASTKartsLap = %vehicle.FASTKartsLap;
+	if($FK::RoundType $= "BOUNCY")
+	{
+		%client.FASTKartsLap++;
+	}
+	else
+	{
+		%vehicle.FASTKartsLap++;
+		%client.FASTKartsLap = %vehicle.FASTKartsLap;
+	}
 	if(%client.FASTKartsLap > %laps)
 	{
 		SM_StopSong();

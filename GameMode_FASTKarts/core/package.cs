@@ -86,7 +86,7 @@ package GameModeFASTKartsPackage
 		if(%this.isAdmin)
 			return;
 		
-		if(%this.FK_LastKartUsed $= "")
+		if(%this.FK_LastKartUsed $= "" && $FK::RoundType !$= "BOUNCY")
 			%this.FK_RoundIdleCounter++;
 		
 		if($Pref::Server::FASTKarts::KickIdlePlayers)

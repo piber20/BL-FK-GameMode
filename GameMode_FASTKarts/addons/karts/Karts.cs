@@ -624,10 +624,10 @@ datablock WheeledVehicleData(SpeedKartHoverIIVehicle : SpeedKartVehicle)
    cameraMaxDist = 10;
    defaultTire = SpeedKartHoverIITire;
    density = 9.8;
-   drag = 1.4;
-   engineTorque = 8000;
+   drag = 1.5;
+   engineTorque = 16000;
    brakeTorque = 24000;
-   maxWheelSpeed = 46;
+   maxWheelSpeed = 47.5;
    uiName = "SuperKart Hover";
    initialExplosionProjectile = vehicleExplosionProjectile;
    SpeedKartHornSound = SpeedKartHornSound3;
@@ -757,7 +757,7 @@ datablock WheeledVehicleData(SpeedKartOriginalVehicle : SpeedKartVehicle)
    engineTorque = 12000;
    engineBrake = 2000;
    brakeTorque = 100000;
-   maxWheelSpeed = 45.1;
+   maxWheelSpeed = 44.1;
    UsedToBeShit = false;
    uiName = "SpeedKart Original";
    initialExplosionProjectile = SpeedKartOriginalExplosionProjectile;

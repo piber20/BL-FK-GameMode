@@ -68,6 +68,11 @@ function GameConnection::winRace(%client, %laps)
 	if(%laps < 1)
 		%laps = 1;
 	
+	if(isObject(%vehicle) && %vehicle.FASTKartsLap <= $FK::StartingLap)
+		%vehicle.FASTKartsLap = $FK::StartingLap;
+	if(%client.FASTKartsLap <= $FK::StartingLap)
+		%client.FASTKartsLap = $FK::StartingLap;
+	
 	if($FK::RoundType $= "BOUNCY")
 	{
 		%client.FASTKartsLap++;

@@ -592,116 +592,31 @@ package GameModeFASTKartsPackage
 		}
 		
 		//get round color
-		%color = FK_getRoundColorString();
+		%nameColor = FK_getRoundColorString();
 		
 		//chat emotes compatability
 		if(isFunction(peReplace))
 			%text = peReplace(%text, "\c6");
 		
+		//chat color
+		%chatColor = "\c6";
+		if(%client.isDoingTeamChat)
+			%chatColor = "\c4"; //if they got here through the team message sent function, color chat blue
+		
 		//send the message
-		chatMessageAll(%client, '\c7%1%2%3\c7%4\c6: %5', %client.clanPrefix, %color, %client.getPlayerName(), %client.clanSuffix, %text);
-		echo(%client.getSimpleName() @ ": " @ %text);
+		chatMessageAll(%client, '\c7%1%2%3\c7%4%5: %6', %client.clanPrefix, %nameColor, %client.getPlayerName(), %client.clanSuffix, %chatColor, %text);
+		if(%client.isDoingTeamChat)
+			echo("(T) " @ %client.getSimpleName() @ ": " @ %text);
+		else
+			echo(%client.getSimpleName() @ ": " @ %text);
 	}
 	
 	function serverCmdTeamMessageSent(%client, %text)
 	{
-		//there are no teams in fastkarts, so we simply copy the normal chat but make it blue! amazing!
-		
-		//repeat check
-		%trimText = trim(%text);
-		if(%client.lastChatText $= %trimText)
-		{
-			%chatDelta = (getSimTime() - %client.lastChatTime) / getTimeScale();
-			if(%chatDelta < 15000.0)
-			{
-				%client.spamMessageCount = $SPAM_MESSAGE_THRESHOLD;
-				messageClient(%client, '', '\c5Do not repeat yourself.');
-			}
-		}
-		%client.lastChatTime = getSimTime();
-		%client.lastChatText = %trimText;
-		
-		//player talk animation
-		%player = %client.Player;
-		if(isObject(%player))
-		{
-			%player.playThread(3, talk);
-			%player.schedule(strlen(%text) * 50.0, playThread, 3, root);
-		}
-		
-		//text filtering
-		%text = chatWhiteListFilter(%text);
-		%text = StripMLControlChars(%text);
-		%text = trim(%text);
-		if(strlen(%text) <= 0.0)
-			return;
-		if($Pref::Server::MaxChatLen > 0.0)
-		{
-			if(strlen(%text) >= $Pref::Server::MaxChatLen)
-				%text = getSubStr(%text, 0, $Pref::Server::MaxChatLen);
-		}
-		
-		//links
-		%protocol = "http://";
-		%protocolLen = strlen(%protocol);
-		%urlStart = strpos(%text, %protocol);
-		if(%urlStart == -1.0)
-		{
-			%protocol = "https://";
-			%protocolLen = strlen(%protocol);
-			%urlStart = strpos(%text, %protocol);
-		}
-		if(%urlStart == -1.0)
-		{
-			%protocol = "ftp://";
-			%protocolLen = strlen(%protocol);
-			%urlStart = strpos(%text, %protocol);
-		}
-		if(%urlStart != -1.0)
-		{
-			%urlEnd = strpos(%text, " ", %urlStart + 1.0);
-			%skipProtocol = 0;
-			if(%protocol $= "http://")
-				%skipProtocol = 1;
-			if(%urlEnd == -1.0)
-			{
-				%fullUrl = getSubStr(%text, %urlStart, strlen(%text) - %urlStart);
-				%url = getSubStr(%text, %urlStart + %protocolLen, strlen(%text) - %urlStart - %protocolLen);
-			}
-			else
-			{
-				%fullUrl = getSubStr(%text, %urlStart, %urlEnd - %urlStart);
-				%url = getSubStr(%text, %urlStart + %protocolLen, %urlEnd - %urlStart - %protocolLen);
-			}
-			if(strlen(%url) > 0.0)
-			{
-				%url = strreplace(%url, "<", "");
-				%url = strreplace(%url, ">", "");
-				if (%skipProtocol)
-					%newText = strreplace(%text, %fullUrl, "<a:" @ %url @ ">" @ %url @ "</a>\c6");
-				else
-					%newText = strreplace(%text, %fullUrl, "<a:" @ %protocol @ %url @ ">" @ %url @ "</a>\c6");
-				%text = %newText;
-			}
-		}
-		
-		//etard
-		if($Pref::Server::ETardFilter)
-		{
-			if(!chatFilter(%client, %text, $Pref::Server::ETardList, '\c5This is a civilized game.  Please use full words.'))
-				return;
-		}
-		
-		//get round color
-		%color = FK_getRoundColorString();
-		
-		//chat emotes compatability
-		if(isFunction(peReplace))
-			%text = peReplace(%text, "\c4");
-		
-		//send the message
-		chatMessageAll(%client, '\c7%1%2%3\c7%4\c4: %5', %client.clanPrefix, %color, %client.getPlayerName(), %client.clanSuffix, %text);
-		echo("(T) " @ %client.getSimpleName() @ ": " @ %text);
+		//there are no teams in fastkarts, so we simply do normal chat
+		%client.isDoingTeamChat = true;
+		serverCmdmessageSent(%client, %text);
+		%client.isDoingTeamChat = false;
 	}
 	
 	function fxDTSBrick::onPlayerEnterBrick(%this, %obj)

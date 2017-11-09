@@ -168,6 +168,10 @@ function FK_LoadPrefs()
 	if($Pref::Server::FASTKarts::NoKartKillTime $= "")
 		$Pref::Server::FASTKarts::NoKartKillTime = 20;
 	
+	//allow players to flip their kart using the numpad
+	if($Pref::Server::FASTKarts::KartFlipping $= "")
+		$Pref::Server::FASTKarts::KartFlipping = true;
+	
 	///////////////////////
 	//ALLOWED KARTS PREFS//
 	///////////////////////
@@ -338,6 +342,7 @@ function FK_RegisterRTBPrefs()
 	RTB_registerPref("Rename SuperKarts to SpeedKarts",						"FASTKarts - Karts",	"$Pref::Server::FASTKarts::OldKartNames",		"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
 	RTB_registerPref("Force default SpeedKarts",							"FASTKarts - Karts",	"$Pref::Server::FASTKarts::ForceSpeedkarts",	"bool",			"GameMode_FASTKarts",	false,	true,	false,	false);
 	RTB_registerPref("Kill kartless players after X seconds (-1 disables)",	"FASTKarts - Karts",	"$Pref::Server::FASTKarts::NoKartKillTime",		"int -1 99999",	"GameMode_FASTKarts",	30,		false,	false,	false);
+	RTB_registerPref("Allow players to flip karts using the numpad",		"FASTKarts - Karts",	"$Pref::Server::FASTKarts::KartFlipping",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
 	
 	RTB_registerPref("Allow SpeedKart",						"FASTKarts - Allowed Karts",	"$Pref::Server::FASTKarts::AllowSpeedKart",		"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);
 	RTB_registerPref("Allow SpeedKart 64",					"FASTKarts - Allowed Karts",	"$Pref::Server::FASTKarts::Allow64",			"bool",			"GameMode_FASTKarts",	true,	true,	false,	false);

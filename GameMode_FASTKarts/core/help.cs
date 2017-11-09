@@ -12,7 +12,8 @@ function serverCmdHelp(%client)
 	messageClient(%client, '', "\c6 - \c3/trackRecord (number) \c6- Lists the records for the track provided.");
 	if($Pref::Server::FASTKarts::Achievements)
 		messageClient(%client, '', "\c6 - \c3/achievements \c6- Check out your achievements.");
-	messageClient(%client, '', "\c6 - \c3/flip \c6- Flips your kart over. You can also press your brick plant key.");
+	if($Pref::Server::FASTKarts::KartFlipping)
+		messageClient(%client, '', "\c6 - \c3/flip \c6- Flips your kart over. You can also press your brick movement keys.");
 	if(%client.isAdmin)
 		messageClient(%client, '', "\c6 - \c3/fkAdmin \c6- Lists the commands only an administrator can use.");
 	messageClient(%client, '', "\c6 - \c3/credits \c6- View the credits");
@@ -363,8 +364,10 @@ function FK_TipTick()
 		%tip[%pick++] = "\c5Tip\c6: Braking is key.";
 		%tip[%pick++] = "\c5Tip\c6: Click the vehicle spawn to to spawn a speedkart.";
 		%tip[%pick++] = "\c5Tip\c6: You can color your kart by simply spraying it with your paint can.";
-		%tip[%pick++] = "\c5Tip\c6: Press your brick plant key to make your kart flip. This can get you unstuck or help you do some sick tricks.";
 		%tip[%pick++] = "\c5Tip\c6: If you see some floating bricks that shouldn't be there, try typing \"FlushVBOCache();\" in your console.";
+		
+		if($Pref::Server::FASTKarts::KartFlipping)
+			%tip[%pick++] = "\c5Tip\c6: Press your brick movement keys to make your kart flip. This can get you unstuck or help you do some sick tricks.";
 		
 		if(FK_getKartsAllowed() > 1 && !$Pref::Server::FASTKarts::ForceSpeedkarts)
 		{

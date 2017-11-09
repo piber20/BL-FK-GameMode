@@ -87,7 +87,12 @@ function gameConnection::FK_setBottomPrintInfo(%this)
 		
 		//round
 		if($Pref::Server::FASTKarts::RoundLimit > 0 && $FK::numTracks > 0)
-			%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Round" @ %color @ ": " @ mfloor($FK::ResetCount) @ "/" @ mfloor($Pref::Server::FASTKarts::RoundLimit) @ "   ";
+		{
+			%lastRound = mfloor($Pref::Server::FASTKarts::RoundLimit);
+			if($FK::VoteNextRound)
+				%lastRound = mfloor($FK::ResetCount);
+			%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Round" @ %color @ ": " @ mfloor($FK::ResetCount) @ "/" @ %lastRound @ "   ";
+		}
 		
 		//time
 		if(!$FK::TrackCompleted)

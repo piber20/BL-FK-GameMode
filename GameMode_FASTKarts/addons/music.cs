@@ -37,6 +37,10 @@ function SM_PlaySong(%client, %profile, %announce, %pitch)
 	%oldTimescale = getTimescale();
 	if(%pitch $= "")
 		%pitch = getTimescale();
+	if(%pitch < 0.2)
+		%pitch = 0.2;
+	if(%pitch > 2)
+		%pitch = 2;
 	
 	if(%announce)
 	{

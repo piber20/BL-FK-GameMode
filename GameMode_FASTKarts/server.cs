@@ -54,7 +54,11 @@ function FK_LoadPrefs()
 	
 	//allow players to vote for tracks
 	if($Pref::Server::FASTKarts::EnableTrackVoting $= "")
-		$Pref::Server::FASTKarts::EnableTrackVoting = 1;
+		$Pref::Server::FASTKarts::EnableTrackVoting = true;
+	
+	//percentage of playerbase votes needed to change the track (out of 100)
+	if($Pref::Server::FASTKarts::PercentVotesNeeded $= "")
+		$Pref::Server::FASTKarts::PercentVotesNeeded = 50;
 	
 	///////////////
 	//MUSIC PREFS//
@@ -79,6 +83,10 @@ function FK_LoadPrefs()
 	//announce when music is changed
 	if($Pref::Server::FASTKarts::AnnounceGlobalMusic $= "")
 		$Pref::Server::FASTKarts::AnnounceGlobalMusic = true;
+	
+	//set music timescale to this when the final lap is reached, like mario kart
+	if($Pref::Server::FASTKarts::FinalLapMusicTimescale $= "")
+		$Pref::Server::FASTKarts::FinalLapMusicTimescale = 1.1;
 	
 	/////////////
 	//TIP PREFS//
@@ -301,13 +309,15 @@ function FK_RegisterRTBPrefs()
 	RTB_registerPref("Load tracks in random order",					"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::RandomTracks",		"bool",														"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Force only tracks of this type to load",		"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::ForceTrackType",		"list Any_Type 0 Campaign 1 Lapped 2 Battle 3",				"GameMode_FASTKarts",	0,		false,	false,	false);
 	RTB_registerPref("Force only tracks with this origin to load",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::ForceTrackOrigin",	"list Any_Origin 0 SpeedKart 1 SuperKart 2 FASTKarts 3",	"GameMode_FASTKarts",	0,		false,	false,	false);
-	RTB_registerPref("Allow player track voting",					"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::EnableTrackVoting",	"list Disallow 0 Allow 1 Round_Only 2",						"GameMode_FASTKarts",	1,		false,	false,	false);
+	RTB_registerPref("Allow players to change the track via votes",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::EnableTrackVoting",	"bool",														"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Percent player votes needed to change track",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::PercentVotesNeeded",	"int 0 100",												"GameMode_FASTKarts",	50,		false,	false,	false);
 	
 	RTB_registerPref("Allow players to play music (/boombox)",				"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableBoombox",			"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Load music from Custom GameMode",						"FASTKarts - Music",	"$Pref::Server::FASTKarts::LoadCustomMusic",		"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Play global music (change with \"/music server\")",	"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableGlobalMusic",		"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Obey track's music setting",							"FASTKarts - Music",	"$Pref::Server::FASTKarts::ObeyTrackMusic",			"list No 0 Only_First_Round 1 All_Rounds 2",	"GameMode_FASTKarts",	2,		false,	false,	false);
 	RTB_registerPref("Announce when global music changes",					"FASTKarts - Music",	"$Pref::Server::FASTKarts::AnnounceGlobalMusic",	"bool",											"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Final lap music timescale (1 = no change)",			"FASTKarts - Music",	"$Pref::Server::FASTKarts::FinalLapMusicTimescale",	"int 0.2 2",									"GameMode_FASTKarts",	1.1,	false,	false,	false);
 	
 	RTB_registerPref("Show tip every X seconds (-1 disables)",	"FASTKarts - Tips",	"$Pref::Server::FASTKarts::TipSeconds",	"int -1 99999",	"GameMode_FASTKarts",	60,	false,	false,	false);
 	

@@ -328,7 +328,7 @@ package GameModeFASTKartsPackage
 								if(%datablock.getClassName() $= "AudioProfile" && %datablock.uiName !$= "")
 									%song[%songCount++] = %datablock;
 							}
-							%randomsong = getRandom(0, %songCount);
+							%randomsong = getRandom(1, %songCount);
 							%play = %song[%randomsong];
 						}
 						
@@ -796,9 +796,6 @@ package GameModeFASTKartsPackage
 			centerPrint(%client, %text, 12);
 			%client.FK_LastKartUsed = %data;
 			%client.FK_RoundIdleCounter = 0;
-			if(%vehicle.FASTKartsLap <= $FK::StartingLap)
-				%vehicle.FASTKartsLap = $FK::StartingLap;
-			%client.FASTKartsLap = %vehicle.FASTKartsLap;
 		}
 	}
 	
@@ -816,6 +813,7 @@ package GameModeFASTKartsPackage
 		{
 			cancel($FK::Tick);
 			cancel($FK::TipTick);
+			$FK::Initialized = "";
 		}
 		
 		return parent::disconnect();

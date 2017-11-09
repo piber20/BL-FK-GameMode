@@ -160,7 +160,7 @@ function serverCmdRandomMap(%client)
 //TRACK VOTING COMMANDS
 function serverCmdVoteTrack(%client, %i)
 {
-	if($Pref::Server::FASTKarts::EnableTrackVoting $= 0)
+	if(!$Pref::Server::FASTKarts::EnableTrackVoting)
 	{
 		messageClient(%client, '', "Track voting is disabled.");
 		return;
@@ -288,6 +288,14 @@ function serverCmdRockTheVote(%client)
 		return;
 	}
 	
+	if($FK::VoteNextRound)
+	{
+		messageClient(%client, '', "There has already been a successful vote to change the track.");
+		%client.FK_isRockingVote = true; //just in case
+		FK_CheckVotes();
+		return;
+	}
+	
 	if(%client.FK_isRockingVote)
 	{
 		messageClient(%client, '', "You've already rocked the vote.");
@@ -317,34 +325,15 @@ function FK_CheckVotes()
 		}
 	}
 	
-	%sub = $DefaultMinigame.numMembers * 0.7;
-	if(%rockers >= %sub && $Pref::Server::FASTKarts::EnableTrackVoting !$= 2)
-	{
-		echo("Votes resulted in the track changing immediately.");
-		messageAll('MsgAdminForce', '\c2Enough people rocked the vote that the track will change \c3right now\c2!');
-		
-		for(%aaa = 0; %aaa < $DefaultMinigame.numMembers; %aaa++)
-		{
-			%member = $DefaultMinigame.member[%aaa];
-			if(isObject(%member))
-			{
-				commandToClient(%member, 'bottomPrint', "", 0, true);
-				%camera = %member.camera;
-				%camera.setFlyMode();
-				%camera.mode = "Observer";
-				%member.setControlObject(%camera);
-			}
-		}
-		
-		SM_StopSong();
-		$FK::CurrentTrack = $FK::VoteTrack - 1;
-		$FK::BypassRandom = true;
-		schedule(3000, 0, FK_NextTrack);
-		return;
-	}
+	if($Pref::Server::FASTKarts::PercentVotesNeeded > 100)
+		$Pref::Server::FASTKarts::PercentVotesNeeded = 100;
+	if($Pref::Server::FASTKarts::PercentVotesNeeded < 0)
+		$Pref::Server::FASTKarts::PercentVotesNeeded = 0;
 	
-	%subb = $DefaultMinigame.numMembers * 0.4;
-	if(%rockers >= %subb && !$FK::VoteNextRound)
+	%percent = $Pref::Server::FASTKarts::PercentVotesNeeded * 0.01
+	
+	%votesNeeded = $DefaultMinigame.numMembers * %percent;
+	if(%rockers >= %votesNeeded && !$FK::VoteNextRound)
 	{
 		echo("Votes resulted in the track changing next round.");
 		messageAll('MsgAdminForce', '\c2Enough people rocked the vote that the track will change \c3next round\c2!');

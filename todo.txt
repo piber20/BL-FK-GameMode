@@ -1,9 +1,0 @@
-sometimes no music will play
-
-set the last round in the hud to the current round when a map is voted
-
-set last lap timescale to 1.1
-
-fix 0/2 lap counter
-
-fix -1 lap

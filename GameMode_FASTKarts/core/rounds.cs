@@ -68,20 +68,10 @@ function GameConnection::winRace(%client, %laps)
 	if(%laps < 1)
 		%laps = 1;
 	
-	if(isObject(%vehicle) && %vehicle.FASTKartsLap <= $FK::StartingLap)
-		%vehicle.FASTKartsLap = $FK::StartingLap;
 	if(%client.FASTKartsLap <= $FK::StartingLap)
 		%client.FASTKartsLap = $FK::StartingLap;
 	
-	if($FK::RoundType $= "BOUNCY")
-	{
-		%client.FASTKartsLap++;
-	}
-	else
-	{
-		%vehicle.FASTKartsLap++;
-		%client.FASTKartsLap = %vehicle.FASTKartsLap;
-	}
+	%client.FASTKartsLap++;
 	if(%client.FASTKartsLap > %laps)
 	{
 		SM_StopSong();
@@ -115,7 +105,7 @@ function GameConnection::winRace(%client, %laps)
 				$FK::FinalLapReached = true;
 				%mg.chatMessageAll(0, "\c3" @ %client.getPlayerName() @ " \c5reached the final lap!");
 				if($Pref::Server::FASTKarts::EnableGlobalMusic)
-					SM_PlaySong("", $SM::MusicPlaying, false, 1.2);
+					SM_PlaySong("", $SM::MusicPlaying, false, $Pref::Server::FASTKarts::FinalLapMusicTimescale);
 			}
 		}
 		

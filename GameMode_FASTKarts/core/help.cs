@@ -1,13 +1,13 @@
 function serverCmdHelp(%client)
 {
 	messageClient(%client, '', "\c6FASTKarts GameMode v" @ $FK::Version @ ". Here is a list of \c3commands\c6.");
-	if($Pref::Server::FASTKarts::EnableTrackVoting $= 1 || $Pref::Server::FASTKarts::RoundLimit > 0)
+	if($Pref::Server::FASTKarts::EnableTrackVoting || $Pref::Server::FASTKarts::RoundLimit > 0)
 	{
 		messageClient(%client, '', "\c6 - \c3/trackList \c6- Lists every track that can currently load.");
 		if($Pref::Server::FASTKarts::ForceTrackOrigin > 0 || $Pref::Server::FASTKarts::ForceTrackType > 0)
 			messageClient(%client, '', "\c6 - \c3/trackList all \c6- Lists every single track that exists in the server.");
 	}
-	if($Pref::Server::FASTKarts::EnableTrackVoting $= 1)
+	if($Pref::Server::FASTKarts::EnableTrackVoting)
 		messageClient(%client, '', "\c6 - \c3/voteTrack (number) \c6- Vote for a track to load.");
 	messageClient(%client, '', "\c6 - \c3/trackRecord (number) \c6- Lists the records for the track provided.");
 	if($Pref::Server::FASTKarts::Achievements)
@@ -161,7 +161,7 @@ function serverCmdTrackList(%client, %option)
 	}
 	else
 	{
-		if($Pref::Server::FASTKarts::EnableTrackVoting == 0)
+		if(!$Pref::Server::FASTKarts::EnableTrackVoting)
 			messageClient(%client, '', "\c6Currently, tracks \c0do not\c6 rotate.");
 		else
 			messageClient(%client, '', "\c6Currently, tracks are set to load only with \c5player votes\c6.");

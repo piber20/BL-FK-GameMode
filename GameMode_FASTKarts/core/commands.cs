@@ -330,7 +330,7 @@ function FK_CheckVotes()
 	if($Pref::Server::FASTKarts::PercentVotesNeeded < 0)
 		$Pref::Server::FASTKarts::PercentVotesNeeded = 0;
 	
-	%percent = $Pref::Server::FASTKarts::PercentVotesNeeded * 0.01
+	%percent = $Pref::Server::FASTKarts::PercentVotesNeeded * 0.01;
 	
 	%votesNeeded = $DefaultMinigame.numMembers * %percent;
 	if(%rockers >= %votesNeeded && !$FK::VoteNextRound)

@@ -1,6 +1,6 @@
 //command to flip vehicles
 
-function servercmdflip(%client)
+function servercmdflip(%client, %vector)
 {
 	if(!isObject(%client.player))
 		return;
@@ -18,7 +18,10 @@ function servercmdflip(%client)
 		if(%mountedObj != %client.player)
 			return;
 		
-		%vehicle.setangularvelocity(10);
+		if(%vector $= "")
+			%vector = 10; //original function
+		
+		%vehicle.setangularvelocity(%vector);
 	}
 }
 

@@ -21,7 +21,7 @@ function doVehicleFlip(%client, %vector)
 			return;
 		
 		if(%vector $= "")
-			%vector = 10; //original function
+			%vector = $Pref::Server::FASTKarts::KartFlippingMultiplier; //original function
 		
 		%vehicle.setangularvelocity(%vector);
 	}
@@ -40,7 +40,7 @@ function servercmdflip(%client)
 	if(!isObject(%vehicle))
 		return;
 	
-	doVehicleFlip(%client, 10); //original function
+	doVehicleFlip(%client, $Pref::Server::FASTKarts::KartFlippingMultiplier); //original function
 }
 
 //this package allows players to change vehicle orientation in the air
@@ -56,7 +56,7 @@ package flipVehicleCommandPackage
 			if(isObject(%vehicle))
 			{
 				//enter
-				doVehicleFlip(%client, 10); //original function
+				doVehicleFlip(%client, $Pref::Server::FASTKarts::KartFlippingMultiplier); //original function
 			}
 		}
 		parent::serverCmdPlantBrick(%client, %a, %b, %c, %d, %e, %f);
@@ -73,14 +73,14 @@ package flipVehicleCommandPackage
 				{
 					//7
 					%vector = %vehicle.getUpVector();
-					%vector = vectorScale(%vector, 10);
+					%vector = vectorScale(%vector, $Pref::Server::FASTKarts::KartFlippingMultiplier);
 					doVehicleFlip(%client, %vector);
 				}
 				if(%a == 1)
 				{
 					//9
 					%vector = %vehicle.getUpVector();
-					%vector = vectorScale(%vector, -10);
+					%vector = vectorScale(%vector, -$Pref::Server::FASTKarts::KartFlippingMultiplier);
 					doVehicleFlip(%client, %vector);
 				}
 			}
@@ -101,15 +101,15 @@ package flipVehicleCommandPackage
 					%isUpright = getWord(%vehicle.getUpVector(), 2);
 					%vector = %vehicle.getForwardVector();
 					if(%isUpright >= 0)
-						%vector = vectorScale(%vector, -10);
+						%vector = vectorScale(%vector, -$Pref::Server::FASTKarts::KartFlippingMultiplier);
 					else
-						%vector = vectorScale(%vector, 10);
+						%vector = vectorScale(%vector, $Pref::Server::FASTKarts::KartFlippingMultiplier);
 					%vec0 = getWord(%vector, 0);
 					%vec1 = getWord(%vector, 1);
 					%vec2 = getWord(%vector, 2);
 					%vec0 = %vec0 * -1;
 					%vector = %vec1 SPC %vec0 SPC 0; //SPC %vec2;
-					%vector = vectorScale(vectorNormalize(%vector), 10);
+					%vector = vectorScale(vectorNormalize(%vector), $Pref::Server::FASTKarts::KartFlippingMultiplier);
 					doVehicleFlip(%client, %vector);
 				}
 				if(%a == -1)
@@ -118,48 +118,48 @@ package flipVehicleCommandPackage
 					%isUpright = getWord(%vehicle.getUpVector(), 2);
 					%vector = %vehicle.getForwardVector();
 					if(%isUpright >= 0)
-						%vector = vectorScale(%vector, 10);
+						%vector = vectorScale(%vector, $Pref::Server::FASTKarts::KartFlippingMultiplier);
 					else
-						%vector = vectorScale(%vector, -10);
+						%vector = vectorScale(%vector, -$Pref::Server::FASTKarts::KartFlippingMultiplier);
 					%vec0 = getWord(%vector, 0);
 					%vec1 = getWord(%vector, 1);
 					%vec2 = getWord(%vector, 2);
 					%vec0 = %vec0 * -1;
 					%vector = %vec1 SPC %vec0 SPC 0; //SPC %vec2;
-					%vector = vectorScale(vectorNormalize(%vector), 10);
+					%vector = vectorScale(vectorNormalize(%vector), $Pref::Server::FASTKarts::KartFlippingMultiplier);
 					doVehicleFlip(%client, %vector);
 				}
 				if(%b == 1)
 				{
 					//4
 					%vector = %vehicle.getForwardVector();
-					%vector = vectorScale(%vector, -10);
+					%vector = vectorScale(%vector, -$Pref::Server::FASTKarts::KartFlippingMultiplier);
 					doVehicleFlip(%client, %vector);
 				}
 				if(%b == -1)
 				{
 					//6
 					%vector = %vehicle.getForwardVector();
-					%vector = vectorScale(%vector, 10);
+					%vector = vectorScale(%vector, $Pref::Server::FASTKarts::KartFlippingMultiplier);
 					doVehicleFlip(%client, %vector);
 				}
 				if(%c == 1)
 				{
 					//3
 					%vector = %vehicle.getUpVector();
-					%vector = vectorScale(%vector, -10);
+					%vector = vectorScale(%vector, -$Pref::Server::FASTKarts::KartFlippingMultiplier);
 					doVehicleFlip(%client, %vector);
 				}
 				if(%c == 3)
 				{
 					//+
-					doVehicleFlip(%client, -10); //mirror of original function
+					doVehicleFlip(%client, -$Pref::Server::FASTKarts::KartFlippingMultiplier); //mirror of original function
 				}
 				if(%c == -1)
 				{
 					//1
 					%vector = %vehicle.getUpVector();
-					%vector = vectorScale(%vector, 10);
+					%vector = vectorScale(%vector, $Pref::Server::FASTKarts::KartFlippingMultiplier);
 					doVehicleFlip(%client, %vector);
 				}
 				//if(%c == -3)

@@ -1,0 +1,8 @@
+add look im on tv achievement
+unlocked by being the first to reach the final lap
+
+make achievements unlock silently when disabled
+
+add announce achievements only to client setting
+
+change map type setting to checkboxes

@@ -45,7 +45,7 @@ function FK_BuildTrackList()
 			$FK::TrackOrigin[$FK::numTracks] = %origin;
 		}
 		else
-			$FK::TrackOrigin[$FK::numTracks] = "FASTKarts";
+			$FK::TrackOrigin[$FK::numTracks] = "Unknown";
 
 		if(%type $= "Campaign" || %type $= "Lapped" || %type $= "Battle") //battle is currently unused, does absolutely nothing
 			$FK::TrackType[$FK::numTracks] = %type;
@@ -77,149 +77,47 @@ function FK_NextTrack()
 	}
 	$FK::BypassRandom = false;
 	
-	if($Pref::Server::FASTKarts::ForceTrackOrigin == 1)
-		%origin = "SpeedKart";
-	if($Pref::Server::FASTKarts::ForceTrackOrigin == 2)
-		%origin = "SuperKart";
-	if($Pref::Server::FASTKarts::ForceTrackOrigin == 3)
-		%origin = "FASTKarts";
-	
-	if($Pref::Server::FASTKarts::ForceTrackType == 1)
-		%type = "Campaign";
-	if($Pref::Server::FASTKarts::ForceTrackType == 2)
-		%type = "Lapped";
-	if($Pref::Server::FASTKarts::ForceTrackType == 3)
-		%type = "Battle";
-	
-	if($Pref::Server::FASTKarts::ForceTrackOrigin > 0 && !$FK::BypassOrigin && $Pref::Server::FASTKarts::ForceTrackType > 0 && !$FK::BypassType)
+	if(FK_areTracksRestricted())
 	{
 		for(%a = 0; %a < $FK::numTracks; %a++)
 		{
-			
-			if($FK::TrackOrigin[%a] $= %origin && $FK::TrackType[%a] $= %type)
+			if(FK_trackCanLoad(%a))
 			{
-				%allExists = true;
+				%tracksExist = true;
 				
-				if(!%allFoundFirstTrack)
+				if(!%foundFirstTrack)
 				{
-					%allFirstToLoad = %a;
-					%allFoundFirstTrack = true;
+					%firstToLoad = %a;
+					%foundFirstTrack = true;
 				}
 				
-				if(!%allFoundNextTrack)
+				if(!%foundNextTrack)
 				{
-					%allTrackToLoad = %a;
+					%trackToLoad = %a;
 					
 					if(%a > $FK::CurrentTrack)
-						%allFoundNextTrack = true;
+						%foundNextTrack = true;
 				}
 				
-				%allLastToLoad = %a;
+				%lastToLoad = %a;
 			}
 		}
 		
-		if(%allExists)
+		if(%tracksExist)
 		{
-			if($FK::CurrentTrack >= %allLastToLoad && !%allFoundNextTrack)
-				%allTrackToLoad = %allFirstToLoad;
+			if($FK::CurrentTrack >= %lastToLoad && !%foundNextTrack)
+				%trackToLoad = %firstToLoad;
 			
-			$FK::CurrentTrack = %allTrackToLoad - 1;
+			$FK::CurrentTrack = %trackToLoad - 1;
 			$FK::BypassOrigin = false;
 			$FK::BypassType = false;
 		}
-		else
+		else //should be impossible to get here but just in case
 		{
-			error("ERROR: No tracks have origin " @ %origin @ " AND the " @ %type @ " type. Setting type pref to 0");
-			$Pref::Server::FASTKarts::ForceTrackType = 0;
-			FK_NextTrack();
+			messageAll('', "\c5No FASTKarts tracks available!");
+			messageAll('', "\c5You can find where tracks are hosted by typing this command into chat: \c3/download");
 			return;
 		}
-	}
-	else
-	{
-		if($Pref::Server::FASTKarts::ForceTrackOrigin > 0 && !$FK::BypassOrigin)
-		{
-			for(%a = 0; %a < $FK::numTracks; %a++)
-			{
-				if($FK::TrackOrigin[%a] $= %origin)
-				{
-					%originExists = true;
-					
-					if(!%foundFirstTrack)
-					{
-						%firstToLoad = %a;
-						%foundFirstTrack = true;
-					}
-					
-					if(!%foundNextTrack)
-					{
-						%trackToLoad = %a;
-						
-						if(%a > $FK::CurrentTrack)
-							%foundNextTrack = true;
-					}
-					
-					%lastToLoad = %a;
-				}
-			}
-			
-			if(%originExists)
-			{
-				if($FK::CurrentTrack >= %lastToLoad && !%foundNextTrack)
-					%trackToLoad = %firstToLoad;
-				
-				$FK::CurrentTrack = %trackToLoad - 1;
-			}
-			else
-			{
-				error("ERROR: No tracks are in origin " @ %origin @ ". Setting origin pref to 0");
-				$Pref::Server::FASTKarts::ForceTrackOrigin = 0;
-			}
-		}
-		
-		$FK::BypassOrigin = false;
-		
-		if($Pref::Server::FASTKarts::ForceTrackType > 0 && !$FK::BypassType)
-		{
-			for(%b = 0; %b < $FK::numTracks; %b++)
-			{
-				if($FK::TrackType[%b] $= %type)
-				{
-					%typeExists = true;
-					
-					if(!%typeFoundFirstTrack)
-					{
-						%typeFirstToLoad = %b;
-						%typeFoundFirstTrack = true;
-					}
-					
-					if(!%typeFoundNextTrack)
-					{
-						%typeTrackToLoad = %b;
-						
-						if(%b > $FK::CurrentTrack)
-							%typeFoundNextTrack = true;
-					}
-					
-					%typeLastToLoad = %b;
-				}
-			}
-			
-			if(%typeExists)
-			{
-				if($FK::CurrentTrack >= %typeLastToLoad && !%typeFoundNextTrack)
-					%typeTrackToLoad = %typeFirstToLoad;
-				
-				$FK::CurrentTrack = %typeTrackToLoad - 1;
-			}
-			else
-			{
-				error("ERROR: No tracks have the " @ %type @ " type. Setting type pref to 0");
-				$Pref::Server::FASTKarts::ForceTrackType = 0;
-			}
-		}
-		
-		$FK::BypassType = false;
 	}
 	
 	$FK::CurrentTrack = mFloor($FK::CurrentTrack);
@@ -407,4 +305,105 @@ function FK_getTrackName(%displayName, %fromPath)
 	%displayName = strReplace(%displayName, "_", " ");
 	
 	return %displayName;
+}
+
+function FK_getTrackTypesAllowed()
+{
+	%types = $Pref::Server::FASTKarts::CampaignTrackType + $Pref::Server::FASTKarts::LappedTrackType + $Pref::Server::FASTKarts::BattleTrackType;
+	return %types;
+}
+
+function FK_isAllowedType(%type)
+{
+	if($FK::BypassType)
+		return true;
+	
+	if(FK_getTrackTypesAllowed() <= 0) //just in case they disable all the track type prefs
+	{
+		error("ERROR: All allowed track types were disabled. Reenabling them all...");
+		$Pref::Server::FASTKarts::CampaignTrackType = true;
+		$Pref::Server::FASTKarts::LappedTrackType = true;
+		$Pref::Server::FASTKarts::BattleTrackType = true;
+	}
+	
+	if(%type $= "Campaign")
+	{
+		if($Pref::Server::FASTKarts::CampaignTrackType)
+			return true;
+	}
+	else if(%type $= "Lapped")
+	{
+		if($Pref::Server::FASTKarts::LappedTrackType)
+			return true;
+	}
+	else if(%type $= "Battle")
+	{
+		if($Pref::Server::FASTKarts::BattleTrackType)
+			return true;
+	}
+	
+	return false;
+}
+
+function FK_getTrackOriginsAllowed()
+{
+	%origins = $Pref::Server::FASTKarts::SpeedKartTracks + $Pref::Server::FASTKarts::SuperKartTracks + $Pref::Server::FASTKarts::FASTKartsTracks + $Pref::Server::FASTKarts::OtherTracks;
+	return %origins;
+}
+
+function FK_isAllowedOrigin(%origin)
+{
+	if($FK::BypassOrigin)
+		return true;
+	
+	if(FK_getTrackOriginsAllowed() <= 0) //just in case they disable all the track origin prefs
+	{
+		error("ERROR: All allowed track origins were disabled. Reenabling them all...");
+		$Pref::Server::FASTKarts::SpeedKartTracks = true;
+		$Pref::Server::FASTKarts::SuperKartTracks = true;
+		$Pref::Server::FASTKarts::FASTKartsTracks = true;
+		$Pref::Server::FASTKarts::OtherTracks = true;
+	}
+	
+	if(%origin $= "SpeedKart")
+	{
+		if($Pref::Server::FASTKarts::SpeedKartTracks)
+			return true;
+	}
+	else if(%origin $= "SuperKart")
+	{
+		if($Pref::Server::FASTKarts::SuperKartTracks)
+			return true;
+	}
+	else if(%origin $= "FASTKarts")
+	{
+		if($Pref::Server::FASTKarts::FASTKartsTracks)
+			return true;
+	}
+	else
+	{
+		if($Pref::Server::FASTKarts::OtherTracks)
+			return true;
+	}
+	
+	return false;
+}
+
+function FK_trackCanLoad(%num)
+{
+	%origin = $FK::TrackOrigin[%a];
+	%type = $FK::TrackType[%a];
+	
+	if(FK_isAllowedOrigin(%origin) && FK_isAllowedType(%type))
+		return true;
+	
+	return false;
+}
+
+function FK_areTracksRestricted()
+{
+	if(FK_getTrackTypesAllowed() < 3 || FK_getTrackOriginsAllowed() < 4)
+		return true;
+	
+	return false;
 }

@@ -13,3 +13,5 @@ exec("./music.cs");
 exec("./bouncyplayer.cs");
 exec("./sibamodter/main.cs");
 exec("./modifiedmodter/main.cs");
+exec("./decorpack/decor.cs");
+exec("./elmtrees/trees.cs");

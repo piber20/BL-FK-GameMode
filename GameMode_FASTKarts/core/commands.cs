@@ -184,43 +184,10 @@ function serverCmdVoteTrack(%client, %i)
 		return;
 	}
 	
-	if($Pref::Server::FASTKarts::ForceTrackOrigin == 1)
-		%origin = "SpeedKart";
-	if($Pref::Server::FASTKarts::ForceTrackOrigin == 2)
-		%origin = "SuperKart";
-	if($Pref::Server::FASTKarts::ForceTrackOrigin == 3)
-		%origin = "FASTKarts";
-	
-	if($Pref::Server::FASTKarts::ForceTrackType == 1)
-		%type = "Campaign";
-	if($Pref::Server::FASTKarts::ForceTrackType == 2)
-		%type = "Lapped";
-	if($Pref::Server::FASTKarts::ForceTrackType == 3)
-		%type = "Battle";
-	
-	if($Pref::Server::FASTKarts::ForceTrackOrigin > 0 && $Pref::Server::FASTKarts::ForceTrackType > 0)
+	if(!FK_trackCanLoad(%i))
 	{
-		if($FK::TrackOrigin[%i] !$= %origin || $FK::TrackType[%i] !$= %type)
-		{
-			messageClient(%client, '', "You cannot vote for that track.");
-			return;
-		}
-	}
-	else if($Pref::Server::FASTKarts::ForceTrackOrigin > 0)
-	{
-		if($FK::TrackOrigin[%i] !$= %origin)
-		{
-			messageClient(%client, '', "You cannot vote for that track.");
-			return;
-		}
-	}
-	else if($Pref::Server::FASTKarts::ForceTrackType > 0)
-	{
-		if($FK::TrackType[%i] !$= %type)
-		{
-			messageClient(%client, '', "You cannot vote for that track.");
-			return;
-		}
+		messageClient(%client, '', "You cannot vote for that track.");
+		return;
 	}
 
 	if(mfloor(%i) < 0)

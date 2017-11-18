@@ -44,13 +44,33 @@ function FK_LoadPrefs()
 	if($Pref::Server::FASTKarts::RandomTracks $= "")
 		$Pref::Server::FASTKarts::RandomTracks = false;
 	
-	//only allow tracks with the provided type to load
-	if($Pref::Server::FASTKarts::ForceTrackType $= "")
-		$Pref::Server::FASTKarts::ForceTrackType = 0;
+	//true to enable loading campaign tracks
+	if($Pref::Server::FASTKarts::CampaignTrackType $= "")
+		$Pref::Server::FASTKarts::CampaignTrackType = true;
 	
-	//only allow tracks with the provided origin to load
-	if($Pref::Server::FASTKarts::ForceTrackOrigin $= "")
-		$Pref::Server::FASTKarts::ForceTrackOrigin = 0;
+	//true to enable loading lapped tracks
+	if($Pref::Server::FASTKarts::LappedTrackType $= "")
+		$Pref::Server::FASTKarts::LappedTrackType = true;
+	
+	//true to enable loading battle tracks
+	if($Pref::Server::FASTKarts::BattleTrackType $= "")
+		$Pref::Server::FASTKarts::BattleTrackType = true;
+	
+	//true to enable loading speedkart tracks
+	if($Pref::Server::FASTKarts::SpeedKartTracks $= "")
+		$Pref::Server::FASTKarts::SpeedKartTracks = true;
+	
+	//true to enable loading superkart tracks
+	if($Pref::Server::FASTKarts::SuperKartTracks $= "")
+		$Pref::Server::FASTKarts::SuperKartTracks = true;
+	
+	//true to enable loading fastkarts tracks
+	if($Pref::Server::FASTKarts::FASTKartsTracks $= "")
+		$Pref::Server::FASTKarts::FASTKartsTracks = true;
+	
+	//true to enable loading other tracks
+	if($Pref::Server::FASTKarts::OtherTracks $= "")
+		$Pref::Server::FASTKarts::OtherTracks = true;
 	
 	//allow players to vote for tracks
 	if($Pref::Server::FASTKarts::EnableTrackVoting $= "")
@@ -314,11 +334,16 @@ function FK_RegisterRTBPrefs()
 	RTB_registerPref("Allow Bouncy round type",				"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::BouncyRounds",		"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Kick idle players after 3 rounds",	"FASTKarts - Rounds",	"$Pref::Server::FASTKarts::KickIdlePlayers",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
 	
-	RTB_registerPref("Load tracks in random order",					"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::RandomTracks",		"bool",														"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Force only tracks of this type to load",		"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::ForceTrackType",		"list Any_Type 0 Campaign 1 Lapped 2 Battle 3",				"GameMode_FASTKarts",	0,		false,	false,	false);
-	RTB_registerPref("Force only tracks with this origin to load",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::ForceTrackOrigin",	"list Any_Origin 0 SpeedKart 1 SuperKart 2 FASTKarts 3",	"GameMode_FASTKarts",	0,		false,	false,	false);
-	RTB_registerPref("Allow players to change the track via votes",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::EnableTrackVoting",	"bool",														"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Percent player votes needed to change track",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::PercentVotesNeeded",	"int 0 100",												"GameMode_FASTKarts",	50,		false,	false,	false);
+	RTB_registerPref("Load tracks in random order",								"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::RandomTracks",		"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Allow campaign tracks to load",							"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::CampaignTrackType",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow lapped tracks to load",								"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::LappedTrackType",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow battle tracks to load",								"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::BattleTrackType",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow tracks originating from SpeedKart to load",			"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::SpeedKartTracks",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow tracks originating from SuperKart to load",			"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::SuperKartTracks",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow tracks made specifically for FASTKarts to load",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::FASTKartsTracks",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow tracks originating from other gamemodes to load",	"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::OtherTracks",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow players to change the track via votes",				"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::EnableTrackVoting",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Percent player votes needed to change track",				"FASTKarts - Tracks",	"$Pref::Server::FASTKarts::PercentVotesNeeded",	"int 0 100",	"GameMode_FASTKarts",	50,		false,	false,	false);
 	
 	RTB_registerPref("Allow players to play music (/boombox)",				"FASTKarts - Music",	"$Pref::Server::FASTKarts::EnableBoombox",			"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);
 	RTB_registerPref("Load music from Custom GameMode",						"FASTKarts - Music",	"$Pref::Server::FASTKarts::LoadCustomMusic",		"bool",											"GameMode_FASTKarts",	false,	false,	false,	false);

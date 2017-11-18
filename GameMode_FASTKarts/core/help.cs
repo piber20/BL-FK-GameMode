@@ -4,7 +4,7 @@ function serverCmdHelp(%client)
 	if($Pref::Server::FASTKarts::EnableTrackVoting || $Pref::Server::FASTKarts::RoundLimit > 0)
 	{
 		messageClient(%client, '', "\c6 - \c3/trackList \c6- Lists every track that can currently load.");
-		if($Pref::Server::FASTKarts::ForceTrackOrigin > 0 || $Pref::Server::FASTKarts::ForceTrackType > 0)
+		if(FK_areTracksRestricted())
 			messageClient(%client, '', "\c6 - \c3/trackList all \c6- Lists every single track that exists in the server.");
 	}
 	if($Pref::Server::FASTKarts::EnableTrackVoting)
@@ -24,28 +24,14 @@ function serverCmdHelp(%client)
 
 function serverCmdTrackList(%client, %option)
 {
-	if($Pref::Server::FASTKarts::ForceTrackOrigin == 1)
-		%origin = "SpeedKart";
-	if($Pref::Server::FASTKarts::ForceTrackOrigin == 2)
-		%origin = "SuperKart";
-	if($Pref::Server::FASTKarts::ForceTrackOrigin == 3)
-		%origin = "FASTKarts";
-	
-	if($Pref::Server::FASTKarts::ForceTrackType == 1)
-		%type = "Campaign";
-	if($Pref::Server::FASTKarts::ForceTrackType == 2)
-		%type = "Lapped";
-	if($Pref::Server::FASTKarts::ForceTrackType == 3)
-		%type = "Battle";
-	
-	if(%option $= "all" || ($Pref::Server::FASTKarts::ForceTrackOrigin == 0 && $Pref::Server::FASTKarts::ForceTrackType == 0))
+	if(%option $= "all" || !FK_areTracksRestricted())
 	{
-		messageClient(%client, '', "\c6These are all the track that exist in the server.");
+		messageClient(%client, '', "\c6These are all the tracks that exist in the server.");
 		for(%i = 0; %i < $FK::numTracks; %i++)
 		{
-			if($FK::TrackOrigin[%i] $= %origin || $Pref::Server::FASTKarts::ForceTrackOrigin == 0)
+			if(FK_isAllowedOrigin($FK::TrackOrigin[%i]))
 			{
-				if($FK::TrackType[%i] $= %type || $Pref::Server::FASTKarts::ForceTrackType == 0)
+				if(FK_isAllowedType($FK::TrackType[%i]))
 				{
 					if(%i == $FK::CurrentTrack)
 						messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 - \c3" @ $FK::TrackOrigin[%i] @ "\c2 (\c3" @ $FK::TrackType[%i] @ "\c2)");
@@ -74,80 +60,19 @@ function serverCmdTrackList(%client, %option)
 		}
 		messageClient(%client, '', "\c6In total, there are \c3" @ %tracksExist @ "\c6 tracks in the server, of which \c2" @ %tracksCanLoad @ "\c6 can load.");
 	}
-	else if((%option $= "sort" || $Pref::Server::FASTKarts::ForceTrackType == 0) && $Pref::Server::FASTKarts::ForceTrackOrigin > 0)
-	{
-		messageClient(%client, '', "\c6These tracks originate from \c3" @ %origin @ "\c6.");
-		for(%i = 0; %i < $FK::numTracks; %i++)
-		{
-			if($FK::TrackOrigin[%i] $= %origin)
-			{
-				if($FK::TrackType[%i] $= %type || $Pref::Server::FASTKarts::ForceTrackType == 0)
-				{
-					if(%i == $FK::CurrentTrack)
-						messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 (\c3" @ $FK::TrackType[%i] @ "\c2)");
-					else
-						messageClient(%client, '', "\c2  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 (\c3" @ $FK::TrackType[%i] @ "\c2)");
-					
-					%tracksCanLoad++;
-				}
-				else
-				{
-					if(%i == $FK::CurrentTrack)
-						messageClient(%client, '', "\c5>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c5 (\c3" @ $FK::TrackType[%i] @ "\c5)");
-					else
-						messageClient(%client, '', "\c5  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c5 (\c3" @ $FK::TrackType[%i] @ "\c5)");
-				}
-				
-				%tracksSorted++;
-			}
-		}
-		messageClient(%client, '', "\c6In total, there are \c3" @ %tracksSorted @ "\c6 in this list, of which \c2" @ %tracksCanLoad @ "\c6 can load.");
-	}
-	else if((%option $= "theme" || $Pref::Server::FASTKarts::ForceTrackOrigin == 0) && $Pref::Server::FASTKarts::ForceTrackType > 0)
-	{
-		messageClient(%client, '', "\c6These tracks are \c3" @ %type @ "\c6 tracks.");
-		for(%i = 0; %i < $FK::numTracks; %i++)
-		{
-			if($FK::TrackType[%i] $= %type)
-			{
-				if($FK::TrackOrigin[%i] $= %origin || $Pref::Server::FASTKarts::ForceTrackOrigin == 0)
-				{
-					if(%i == $FK::CurrentTrack)
-						messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 - \c3" @ $FK::TrackOrigin[%i]);
-					else
-						messageClient(%client, '', "\c2  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 - \c3" @ $FK::TrackOrigin[%i]);
-					
-					%tracksCanLoad++;
-				}
-				else
-				{
-					if(%i == $FK::CurrentTrack)
-						messageClient(%client, '', "\c0>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c0 - \c3" @ $FK::TrackOrigin[%i]);
-					else
-						messageClient(%client, '', "\c0  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c0 - \c3" @ $FK::TrackOrigin[%i]);
-				}
-				
-				%tracksSorted++;
-			}
-		}
-		messageClient(%client, '', "\c6In total, there are \c3" @ %tracksSorted @ "\c6 in this list, of which \c2" @ %tracksCanLoad @ "\c6 can load.");
-	}
 	else
 	{
-		messageClient(%client, '', "\c6These tracks originate \c3" @ %origin @ "\c6 and are \c3" @ %type @ "\c6 tracks.");
+		messageClient(%client, '', "\c6These tracks are the only ones that are allowed to load with the server's current restrictions.");
 		for(%i = 0; %i < $FK::numTracks; %i++)
 		{
-			if($FK::TrackOrigin[%i] $= %origin)
+			if(FK_trackCanLoad(%i))
 			{
-				if($FK::TrackType[%i] $= %type)
-				{
-					if(%i == $FK::CurrentTrack)
-						messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i));
-					else
-						messageClient(%client, '', "\c2  " @ %i @ ". \c6" @ FK_getTrackName(%i));
-					
-					%tracksCanLoad++;
-				}
+				if(%i == $FK::CurrentTrack)
+					messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i));
+				else
+					messageClient(%client, '', "\c2  " @ %i @ ". \c6" @ FK_getTrackName(%i));
+				
+				%tracksCanLoad++;
 			}
 		}
 		messageClient(%client, '', "\c6In total, there are \c2" @ %tracksCanLoad @ "\c6 tracks that can load.");
@@ -336,6 +261,8 @@ function serverCmdCredits(%client)
 	messageClient(%client, '', "<a:https://forum.blockland.us/index.php?topic=286400>siba's ModTer Pack</a>\c6 by siba.");
 	messageClient(%client, '', "<a:https://forum.blockland.us/index.php?topic=311104>Modified Modter</a>\c6 by piber20.");
 	messageClient(%client, '', "<a:http://orbs.daprogs.com/rtb/forum.returntoblockland.com/dlm/viewFiled1ae.html?id=5129>Server Music</a>\c6 by Zapk. (fixed)");
+	messageClient(%client, '', "<a:http://orbs.daprogs.com/rtb/forum.returntoblockland.com/dlm/viewFile101a.html?id=5282>Elm's Trees</a>\c6 by phydeaux. (detailtrees)");
+	messageClient(%client, '', "<a:https://forum.blockland.us/index.php?topic=187620.0>ModTer Decor Pack</a>\c6 by [GSF]Ghost. (with fixes)");
 }
 
 function serverCmdDownload(%client)

@@ -24,59 +24,48 @@ function serverCmdHelp(%client)
 
 function serverCmdTrackList(%client, %option)
 {
+	%showEverything = false;
 	if(%option $= "all" || !FK_areTracksRestricted())
-	{
+		%showEverything = true;
+	
+	if(%showEverything)
 		messageClient(%client, '', "\c6These are all the tracks that exist in the server.");
-		for(%i = 0; %i < $FK::numTracks; %i++)
-		{
-			if(FK_isAllowedOrigin($FK::TrackOrigin[%i]))
-			{
-				if(FK_isAllowedType($FK::TrackType[%i]))
-				{
-					if(%i == $FK::CurrentTrack)
-						messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 - \c3" @ $FK::TrackOrigin[%i] @ "\c2 (\c3" @ $FK::TrackType[%i] @ "\c2)");
-					else
-						messageClient(%client, '', "\c2  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c2 - \c3" @ $FK::TrackOrigin[%i] @ "\c2 (\c3" @ $FK::TrackType[%i] @ "\c2)");
-					
-					%tracksCanLoad++;
-				}
-				else
-				{
-					if(%i == $FK::CurrentTrack)
-						messageClient(%client, '', "\c5>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c5 - \c3" @ $FK::TrackOrigin[%i] @ "\c5 (\c3" @ $FK::TrackType[%i] @ "\c5)");
-					else
-						messageClient(%client, '', "\c5  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c5 - \c3" @ $FK::TrackOrigin[%i] @ "\c5 (\c3" @ $FK::TrackType[%i] @ "\c5)");
-				}
-			}
-			else
-			{
-				if(%i == $FK::CurrentTrack)
-					messageClient(%client, '', "\c0>" @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c0 - \c3" @ $FK::TrackOrigin[%i] @ "\c0 (\c3" @ $FK::TrackType[%i] @ "\c0)");
-				else
-					messageClient(%client, '', "\c0  " @ %i @ ". \c6" @ FK_getTrackName(%i) @ "\c0 - \c3" @ $FK::TrackOrigin[%i] @ "\c0 (\c3" @ $FK::TrackType[%i] @ "\c0)");
-			}
-			
-			%tracksExist++;
-		}
-		messageClient(%client, '', "\c6In total, there are \c3" @ %tracksExist @ "\c6 tracks in the server, of which \c2" @ %tracksCanLoad @ "\c6 can load.");
-	}
 	else
-	{
 		messageClient(%client, '', "\c6These tracks are the only ones that are allowed to load with the server's current restrictions.");
-		for(%i = 0; %i < $FK::numTracks; %i++)
+	
+	%tracksCanLoad = 0;
+	for(%i = 0; %i < $FK::numTracks; %i++)
+	{
+		%sendMessage = false;
+		if(FK_trackCanLoad(%i))
 		{
-			if(FK_trackCanLoad(%i))
-			{
-				if(%i == $FK::CurrentTrack)
-					messageClient(%client, '', "\c2>" @ %i @ ". \c6" @ FK_getTrackName(%i));
-				else
-					messageClient(%client, '', "\c2  " @ %i @ ". \c6" @ FK_getTrackName(%i));
-				
-				%tracksCanLoad++;
-			}
+			%color = "\c2";
+			%sendMessage = true;
+			%tracksCanLoad++;
 		}
-		messageClient(%client, '', "\c6In total, there are \c2" @ %tracksCanLoad @ "\c6 tracks that can load.");
+		else if(FK_isAllowedOrigin($FK::TrackOrigin[%i]) || FK_isAllowedType($FK::TrackType[%i]))
+			%color = "\c5";
+		else
+			%color = "\c0";
+		
+		if(%i == $FK::CurrentTrack)
+			%currentTrack = ">";
+		else
+			%currentTrack = "  ";
+		
+		if(%showEverything)
+			%sendMessage = true;
+		
+		if(%sendMessage)
+			messageClient(%client, '', %color @ %currentTrack @ %i @ ". \c6" @ FK_getTrackName(%i) @ %color @ " - \c3" @ $FK::TrackOrigin[%i] @ %color @ " (\c3" @ $FK::TrackType[%i] @ %color @ ")");
+		
+		%tracksExist++;
 	}
+	
+	if(%showEverything)
+		messageClient(%client, '', "\c6In total, there are \c3" @ %tracksExist @ "\c6 tracks in the server, of which \c2" @ %tracksCanLoad @ "\c6 can load.");
+	else
+		messageClient(%client, '', "\c6In total, there are \c2" @ %tracksCanLoad @ "\c6 tracks that can load.");
 	
 	if($Pref::Server::FASTKarts::RoundLimit > 0)
 	{

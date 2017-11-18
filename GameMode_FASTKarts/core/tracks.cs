@@ -391,8 +391,8 @@ function FK_isAllowedOrigin(%origin)
 
 function FK_trackCanLoad(%num)
 {
-	%origin = $FK::TrackOrigin[%a];
-	%type = $FK::TrackType[%a];
+	%origin = $FK::TrackOrigin[%num];
+	%type = $FK::TrackType[%num];
 	
 	if(FK_isAllowedOrigin(%origin) && FK_isAllowedType(%type))
 		return true;
@@ -402,7 +402,7 @@ function FK_trackCanLoad(%num)
 
 function FK_areTracksRestricted()
 {
-	if(FK_getTrackTypesAllowed() < 3 || FK_getTrackOriginsAllowed() < 4)
+	if(FK_getTrackTypesAllowed() < 3 && FK_getTrackOriginsAllowed() < 4)
 		return true;
 	
 	return false;

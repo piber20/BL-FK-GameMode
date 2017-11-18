@@ -402,8 +402,19 @@ function FK_trackCanLoad(%num)
 
 function FK_areTracksRestricted()
 {
-	if(FK_getTrackTypesAllowed() < 3 && FK_getTrackOriginsAllowed() < 4)
+	if(FK_getTrackTypesAllowed() < 3 || FK_getTrackOriginsAllowed() < 4)
 		return true;
 	
 	return false;
+}
+
+function FK_getTrackByName(%string)
+{
+	%track = -1;
+	for(%a = 0; %a < $FK::numTracks; %a++)
+	{
+		if(%string $= FK_getTrackName(%a))
+			%track = %a;
+	}
+	return %track;
 }

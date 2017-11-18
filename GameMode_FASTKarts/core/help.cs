@@ -8,8 +8,8 @@ function serverCmdHelp(%client)
 			messageClient(%client, '', "\c6 - \c3/trackList all \c6- Lists every single track that exists in the server.");
 	}
 	if($Pref::Server::FASTKarts::EnableTrackVoting)
-		messageClient(%client, '', "\c6 - \c3/voteTrack (number) \c6- Vote for a track to load.");
-	messageClient(%client, '', "\c6 - \c3/trackRecord (number) \c6- Lists the records for the track provided.");
+		messageClient(%client, '', "\c6 - \c3/voteTrack \c6- Vote for a track to load.");
+	messageClient(%client, '', "\c6 - \c3/trackRecord \c6- Lists the records for the track provided.");
 	if($Pref::Server::FASTKarts::Achievements)
 		messageClient(%client, '', "\c6 - \c3/achievements \c6- Check out your achievements.");
 	if($Pref::Server::FASTKarts::KartFlipping)
@@ -82,19 +82,25 @@ function serverCmdTrackList(%client, %option)
 			messageClient(%client, '', "\c6Currently, tracks are set to load only with \c5player votes\c6.");
 	}
 }
-function serverCmdMapList(%client)
+function serverCmdMapList(%client, %option)
 {
-	serverCmdTrackList(%client);
+	serverCmdTrackList(%client, %option);
 }
 
-function serverCmdTrackRecord(%client, %i)
+function serverCmdTrackRecord(%client, %i, %j, %k, %l, %m, %n, %o)
 {
-	if(mFloor(%i) !$= %i)
+	%i = %i SPC %j SPC %k SPC %l SPC %m SPC %n SPC %o;
+	%i = trim(%i);
+	
+	if(%i $= "")
 		%i = $FK::CurrentTrack;
+	
+	if(mFloor(%i) !$= %i)
+		%i = FK_getTrackByName(%i);
 
 	if(%i < 0 || %i > $FK::numTracks)
 	{
-		messageClient(%client, '', "That track doesn't exist.");
+		messageClient(%client, '', "Invalid track. Usage: /trackRecord <number or track name>");
 		return;
 	}
 	
@@ -225,7 +231,7 @@ function serverCmdFKAdmin(%client)
 		return;
 	
 	messageClient(%client, '', "\c6The commands below can only be used by an \c2administrator\c6.");
-	messageClient(%client, '', "\c6 - \c3/setTrack (number) \c6- Change the track to a number provided from /tracklist.");
+	messageClient(%client, '', "\c6 - \c3/setTrack \c6- Change the track to a number provided from /tracklist or the name of the track.");
 	messageClient(%client, '', "\c6 - \c3/nextTrack \c6- Skips the current track.");
 	messageClient(%client, '', "\c6 - \c3/randomTrack \c6- Skips to a random track.");
 	messageClient(%client, '', "\c6 - \c3/setRound (number) \c6- Change the round to the number provided.");

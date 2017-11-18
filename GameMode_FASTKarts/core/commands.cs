@@ -66,26 +66,25 @@ function serverCmdNextRound(%client)
 	SM_StopSong();
 	$DefaultMiniGame.scheduleReset();
 }
-
 function serverCmdSkipRound(%client)
 {
 	serverCmdNextRound(%client);
 }
 
-function serverCmdSetTrack(%client, %i)
+function serverCmdSetTrack(%client, %i, %j, %k, %l, %m, %n, %o)
 {
 	if(!%client.isAdmin)
 		return;
 	
+	%i = %i SPC %j SPC %k SPC %l SPC %m SPC %n SPC %o;
+	%i = trim(%i);
+	
 	if(mFloor(%i) !$= %i)
-	{
-		messageClient(%client, '', "Usage: /setTrack <number>");
-		return;
-	}
+		%i = FK_getTrackByName(%i);
 
 	if(%i < 0 || %i > $FK::numTracks)
 	{
-		messageClient(%client, '', "serverCmdSetTrack() - out of range index");
+		messageClient(%client, '', "Invalid track. Usage: /setTrack <number or track name>");
 		return;
 	}
 	
@@ -98,7 +97,6 @@ function serverCmdSetTrack(%client, %i)
 	$FK::BypassType = true;
 	FK_NextTrack();
 }
-
 function serverCmdSetMap(%client, %i)
 {
 	serverCmdSetTrack(%client, %i);
@@ -158,23 +156,29 @@ function serverCmdRandomMap(%client)
 }
 
 //TRACK VOTING COMMANDS
-function serverCmdVoteTrack(%client, %i)
+function serverCmdVoteTrack(%client, %i, %j, %k, %l, %m, %n, %o)
 {
+	%i = %i SPC %j SPC %k SPC %l SPC %m SPC %n SPC %o;
+	%i = trim(%i);
+	
 	if(!$Pref::Server::FASTKarts::EnableTrackVoting)
 	{
 		messageClient(%client, '', "Track voting is disabled.");
 		return;
 	}
 	
-	if(mFloor(%i) !$= %i)
-	{
-		messageClient(%client, '', "Usage: /vt <number>");
-		return;
-	}
-	
 	if($FK::VoteInProgress)
 	{
 		messageClient(%client, '', "There's already a vote in progress. Type /cv to see what it is and /rtv to rock it.");
+		return;
+	}
+	
+	if(mFloor(%i) !$= %i)
+		%i = FK_getTrackByName(%i);
+
+	if(%i < 0 || %i > $FK::numTracks)
+	{
+		messageClient(%client, '', "Invalid track. Usage: /vt <number or track name>");
 		return;
 	}
 	
@@ -189,12 +193,6 @@ function serverCmdVoteTrack(%client, %i)
 		messageClient(%client, '', "You cannot vote for that track.");
 		return;
 	}
-
-	if(mfloor(%i) < 0)
-		%i = 0;
-	
-	if(mfloor(%i) >= $FK::numTracks)
-		%i = $FK::numTracks - 1;
 	
 	echo(%client.getPlayerName() @ " started a vote to change the track to " @ FK_getTrackName(mfloor(%i)) @ ".");
 	messageAll('MsgAdminForce', '\c3%1\c2 voted to set the track to \c3%2\c2.', %client.getPlayerName(), FK_getTrackName(mfloor(%i)));

@@ -32,6 +32,10 @@ function FK_BuildTrackList()
 						%origin = getWord(%line, getWordCount(%line)-1);
 					case "type":
 						%type = getWord(%line, getWordCount(%line)-1);
+					case "vehicle":
+						%vehicle = getWord(%line, getWordCount(%line)-1);
+					case "round":
+						%round = getWord(%line, getWordCount(%line)-1);
 				}
 			}
 			
@@ -39,6 +43,11 @@ function FK_BuildTrackList()
 			%configFile.delete();
 		}
 		
+		//origin indicates where the track originated from
+		//tracks made for speedkart should be "SpeedKart"
+		//tracks made for superkart should be "SuperKart"
+		//tracks made for fastkarts should be "FASTKarts"
+		//any other values will be seen by the gamemode as "Other" (but will display their unique value in tracklist)
 		if(%origin !$= "")
 		{
 			%origin = strReplace(%origin, "_", " ");
@@ -47,10 +56,37 @@ function FK_BuildTrackList()
 		else
 			$FK::TrackOrigin[$FK::numTracks] = "Unknown";
 
-		if(%type $= "Campaign" || %type $= "Lapped" || %type $= "Battle") //battle is currently unused, does absolutely nothing
+		//type indicates what type of gameplay the track has
+		//"Campaign" tracks are stock standard speedkart tracks, one long path with a finish area
+		//"Lapped" tracks are tracks that repeat and have multiple laps, like superkart
+		//"Battle" is currently unused, and is disabled because there's no code implemented for it yet. it will be for tracks that players fight each other on
+		if(%type $= "Campaign" || %type $= "Lapped")// || %type $= "Battle")
 			$FK::TrackType[$FK::numTracks] = %type;
 		else
 			$FK::TrackType[$FK::numTracks] = "Campaign";
+
+		//vehicle indicates what vehicle type to force tracks to use
+		//this currently does nothing, it's a work in progress
+		//"Standard" is the default option, lets players choose a wide variety of karts that are affected by gravity and cannot fly. standard speedkart karts.
+		//"Gravity" forces players to use vehicles which have an anti-gravity ability and can drive on walls. like the hover kart tracks in superkart.
+		//"Flying" forces players to use plane vehicles that can fly. like the plane tracks in superkart.
+		//"Water" forces players to use rowboat-like vehicles that can only move while in water.
+		//"FakeWater" forces players to use vehicles that pretend they're in water but actually drive on land. it is expected that the land the vehicle drives on would look like water. like the jetski tracks in superkart.
+		if(%vehicle $= "Standard" || %vehicle $= "Gravity" || %vehicle $= "Flying" || %vehicle $= "Water" || %vehicle $= "FakeWater")
+			$FK::TrackVehicle[$FK::numTracks] = %vehicle;
+		else
+			$FK::TrackVehicle[$FK::numTracks] = "Standard";
+
+		//round indicates what round type to force the track to have
+		//this currently does nothing, it's a work in progress
+		//"Any" allows all rounds to be played on the track, and is the default option
+		//"Normal" forces players to play on the track with only the normal round type.
+		//"Rocket" forces players to play on the track with only the rocket round type.
+		//"Bouncy" forces players to play on the track with only the bouncy round type. this could be used for bouncy-oriented challenge maps.
+		if(%round $= "Any" || %round $= "Normal" || %round $= "Rocket" || %round $= "Bouncy")
+			$FK::TrackRound[$FK::numTracks] = %round;
+		else
+			$FK::TrackRound[$FK::numTracks] = "Any";
 		
 		$FK::numTracks++;
 		%file = findNextFile(%pattern);
@@ -63,7 +99,8 @@ function FK_NextTrack()
 	
 	echo("Loading next track...");
 	$FK::ResetCount = 0;
-	$FK::FinalLap = "?";
+	$FK::FinalLap = 1;
+	$FK::TrackIsLoading = true;
 	
 	if(($Pref::Server::FASTKarts::RandomTracks && !$FK::BypassRandom) || $FK::ForceRandom)
 	{
@@ -73,9 +110,7 @@ function FK_NextTrack()
 			%i--;
 		
 		$FK::CurrentTrack = %i - 1;
-		$FK::ForceRandom = false;
 	}
-	$FK::BypassRandom = false;
 	
 	if(FK_areTracksRestricted())
 	{
@@ -109,13 +144,18 @@ function FK_NextTrack()
 				%trackToLoad = %firstToLoad;
 			
 			$FK::CurrentTrack = %trackToLoad - 1;
-			$FK::BypassOrigin = false;
-			$FK::BypassType = false;
 		}
-		else //should be impossible to get here but just in case
+		else
 		{
-			messageAll('', "\c5No FASTKarts tracks available!");
-			messageAll('', "\c5You can find where tracks are hosted by typing this command into chat: \c3/download");
+			error("ERROR: Couldn't find any tracks. Reenabling all allowed track prefs...");
+			$Pref::Server::FASTKarts::CampaignTrackType = true;
+			$Pref::Server::FASTKarts::LappedTrackType = true;
+			$Pref::Server::FASTKarts::BattleTrackType = true;
+			$Pref::Server::FASTKarts::SpeedKartTracks = true;
+			$Pref::Server::FASTKarts::SuperKartTracks = true;
+			$Pref::Server::FASTKarts::FASTKartsTracks = true;
+			$Pref::Server::FASTKarts::OtherTracks = true;
+			FK_NextTrack();
 			return;
 		}
 	}
@@ -124,6 +164,10 @@ function FK_NextTrack()
 	$FK::CurrentTrack++;
 	$FK::CurrentTrack = $FK::CurrentTrack % $FK::numTracks;
 	
+	$FK::ForceRandom = false;
+	$FK::BypassRandom = false;
+	$FK::BypassOrigin = false;
+	$FK::BypassType = false;
 	$FK::VoteInProgress = false;
 	$FK::VoteTrack = "";
 	$FK::VoteNextRound = false;
@@ -134,7 +178,8 @@ function FK_NextTrack()
 			%member.FK_isRockingVote = false;
 	}
 	
-	FK_LoadTrack_Phase1($FK::Track[$FK::CurrentTrack]);
+	$FK::TrackIsLoading = true;
+	schedule(3000, 0, FK_LoadTrack_Phase1, $FK::Track[$FK::CurrentTrack]);
 }
 
 function FK_LoadTrack_Phase1(%filename)

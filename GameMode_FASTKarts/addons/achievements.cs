@@ -21,9 +21,6 @@ function sendLockedAchievementToClient(%client, %bitmapImage, %name, %text, %cat
 
 function unlockClientAchievement(%client, %name)
 {
-	if(!$Pref::Server::FASTKarts::Achievements)
-		return;
-	
 	if(!isObject(%client))
 		return;
 	
@@ -37,7 +34,14 @@ function unlockClientAchievement(%client, %name)
 	if(%client.hasAchievementsMod)
 		commandtoclient(%client, 'UnlockAch', %name);
 	
-	messageAll('', '\c3%1 <bitmap:base/client/ui/ci/star> \c3%2 \c6- %3', %client.name, %name, FK_getAchievementDescription(%name));
+	if($Pref::Server::FASTKarts::Achievements)
+	{
+		if($Pref::Server::FASTKarts::QuietAchievements)
+			messageClient(%this, '', "\c3" @ %client.name @ " <bitmap:base/client/ui/ci/star> \c3" @ %name @ " \c6- " @ FK_getAchievementDescription(%name));
+		else
+			messageAll('', "\c3" @ %client.name @ " <bitmap:base/client/ui/ci/star> \c3" @ %name @ " \c6- " @ FK_getAchievementDescription(%name));
+	}
+	
 	%client.unLockedAchievements[%name] = true;
 	
 	%file = new FileObject();
@@ -92,11 +96,11 @@ package AchClientEnterGame
 		{
 			if(%client.hasAchievementsMod)
 				messageClient(%this, '', "\c3This gamemode has achievements that are compatable with your achievement mod's interface.");
-			
-			clearClientAchievements(%this);
-			sendAchievements(%this);
-			loadClientAchievements(%this);
 		}
+		
+		clearClientAchievements(%this);
+		sendAchievements(%this);
+		loadClientAchievements(%this);
 	}
 };
 

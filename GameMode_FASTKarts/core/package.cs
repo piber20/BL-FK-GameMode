@@ -25,6 +25,7 @@ package GameModeFASTKartsPackage
 			//message
 			messageAll('', "\c5No FASTKarts tracks available!");
 			messageAll('', "\c5You can find where tracks are hosted by typing this command into chat: \c3/download");
+			$FK::Initialized = true;
 			return;
 		}
 		
@@ -33,7 +34,6 @@ package GameModeFASTKartsPackage
 		
 		$FK::Initialized = true;
 		$FK::CurrentTrack = -1;
-		
 		FK_NextTrack();
 	}
 	
@@ -383,6 +383,7 @@ package GameModeFASTKartsPackage
 			}
 			
 			echo("Beginning round...");
+			$FK::TrackIsLoading = false;
 			FK_DetermineRoundType();
 			
 			if($Pref::Server::FASTKarts::RoundLimit > 0 && $FK::numTracks > 0)

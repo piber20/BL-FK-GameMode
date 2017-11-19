@@ -147,7 +147,7 @@ function serverCmdRandomTrack(%client)
 	
 	SM_StopSong();
 	$FK::ForceRandom = true;
-	schedule(3000, 0, FK_NextTrack);
+	FK_NextTrack();
 }
 
 function serverCmdRandomMap(%client)

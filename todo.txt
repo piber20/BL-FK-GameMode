@@ -1,6 +1,9 @@
-add look im on tv achievement
-unlocked by being the first to reach the final lap
+short term:
+- make anti support_garage script
 
-make achievements unlock silently when disabled
-
-add announce achievements only to client setting
+long term goals:
+- Mario-kart-like powerups, exclusive to a powerup round type that might replace the rocket round type.
+- Item boxes distributed throughout the track, just like mario kart.
+- Battle tracks using the powerups.
+- Sounds that play when you pass a lap, reach the final lap, win the race, and potentially more.
+- MicroCars as new karts. (maybe?)

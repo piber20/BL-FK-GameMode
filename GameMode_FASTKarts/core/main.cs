@@ -63,17 +63,18 @@ function FK_Tick()
 
 function gameConnection::FK_setBottomPrintInfo(%this)
 {
+	if(!$FK::Initialized)
+		return;
+	
 	%mg = %this.miniGame;
-
 	if(!isObject(%mg))
 		%mg = $DefaultMiniGame;
-
 	if(!isObject(%mg))
 		return;
 	
-	if($FK::ResetCount == 0)
+	if($FK::TrackIsLoading)
 	{
-		//loading message
+		//loading track message
 		%this.FKBottomPrint = "<just:center>";
 		%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Loading \c4" @ FK_getTrackName($FK::CurrentTrack) @ "\c6...";
 	}
@@ -131,7 +132,7 @@ function gameConnection::FK_setBottomPrintInfo(%this)
 		if($FK::numTracks > 0)
 			%this.FKBottomPrint = %this.FKBottomPrint @ "\c6Track" @ %color @ ": " @ FK_getTrackName($FK::CurrentTrack);
 	}
-		
+	
 	//completed building it, send it.
 	commandToClient(%this, 'bottomPrint', %this.FKBottomPrint, 0, true);
 }

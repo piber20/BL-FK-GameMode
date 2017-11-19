@@ -1,6 +1,6 @@
 function FK_getAchievementDescription(%achievement)
 {
-	%description = "\c0ERROR: Got a description for an achievement that has none, or the achievement doesn't exist.";
+	%description = "\c0ERROR: " @ %achievement @ " achievement has no description or doesn't exist";
 	
 	if(%achievement $= "Hugs Make Things Better")
 		%description = "Use the hug command.";
@@ -22,6 +22,8 @@ function FK_getAchievementDescription(%achievement)
 		%description = "Kill a player by running them over with a vehicle.";
 	if(%achievement $= "Getting Started")
 		%description = "Complete your first lap.";
+	if(%achievement $= "Look Im on TV")
+		%description = "Be the first to reach the final lap.";
 	if(%achievement $= "Winner")
 		%description = "Win your first race.";
 	
@@ -53,6 +55,7 @@ function serverCmdAchievements(%client)
 	%client.FK_getAchievementListString("Treasure Hunter");
 	%client.FK_getAchievementListString("Road Kill");
 	%client.FK_getAchievementListString("Getting Started");
+	%client.FK_getAchievementListString("Look Im on TV");
 	%client.FK_getAchievementListString("Winner");
 }
 
@@ -79,6 +82,7 @@ function sendAchievements(%client) //overwriting the original add-on, we're taki
 	sendLockedAchievementToClient(%client, "lego",		"Treasure Hunter",			FK_getAchievementDescription("Treasure Hunter"),			%general);
 	sendLockedAchievementToClient(%client, "unknown",	"Road Kill",				FK_getAchievementDescription("Road Kill"),					%deathmatch);
 	sendLockedAchievementToClient(%client, "number1",	"Getting Started",			FK_getAchievementDescription("Getting Started"),			%general);
+	sendLockedAchievementToClient(%client, "number1",	"Look Im on TV",			FK_getAchievementDescription("Look Im on TV"),				%general);
 	sendLockedAchievementToClient(%client, "number1",	"Winner",					FK_getAchievementDescription("Winner"),						%general);
 }
 
@@ -163,8 +167,16 @@ package FKAchievementsPackage
 	
 	function GameConnection::winRace(%this, %laps)
 	{
+		%finalLapAlreadyReached = $FK::FinalLapReached;
 		Parent::winRace(%this, %laps);
-		if(%this.FASTKartsLap != 1) //if they did not just complete lap 0
+		%reachedFinalLap = $FK::FinalLapReached;
+		
+		if(!%finalLapAlreadyReached) //if the final lap wasn't reached before this function
+		{
+			if(%reachedFinalLap) //but was set after the function was called
+				unlockClientAchievement(%this, "Look Im on TV");
+		}
+		if(%this.FASTKartsLap > 1) //if they did not just complete lap 0
 			unlockClientAchievement(%this, "Getting Started");
 		if(%this.FASTKartsLap > %laps)
 		{

@@ -124,6 +124,10 @@ function FK_LoadPrefs()
 	if($Pref::Server::FASTKarts::Achievements $= "")
 		$Pref::Server::FASTKarts::Achievements = true;
 	
+	//only announce unlocked achievements to the client
+	if($Pref::Server::FASTKarts::QuietAchievements $= "")
+		$Pref::Server::FASTKarts::QuietAchievements = true;
+	
 	//crumble players on death
 	if($Pref::Server::FASTKarts::CrumbleDeath $= "")
 		$Pref::Server::FASTKarts::CrumbleDeath = true;
@@ -354,15 +358,16 @@ function FK_RegisterRTBPrefs()
 	
 	RTB_registerPref("Show tip every X seconds (-1 disables)",	"FASTKarts - Tips",	"$Pref::Server::FASTKarts::TipSeconds",	"int -1 99999",	"GameMode_FASTKarts",	60,	false,	false,	false);
 	
-	RTB_registerPref("Enable achievements system",			"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::Achievements",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable crumble death effect",			"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::CrumbleDeath",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable PGDie death effects",			"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::PGDieEffects",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable PGDie death sounds",			"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::PGDieSounds",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Enable random death yells",			"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::RandomDeathYells",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
-	RTB_registerPref("Allow vehicleless race completions",	"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::VehiclelessWins",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Announce new records",				"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::AnnounceRecords",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Show full time on race completion",	"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::ShowMilliseconds",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
-	RTB_registerPref("Enable novelty items",				"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::EnableNoveltyItems",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable achievements system",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::Achievements",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Only announce unlocked achievements to the player",	"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::QuietAchievements",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable crumble death effect",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::CrumbleDeath",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable PGDie death effects",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::PGDieEffects",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable PGDie death sounds",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::PGDieSounds",		"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Enable random death yells",							"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::RandomDeathYells",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
+	RTB_registerPref("Allow vehicleless race completions",					"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::VehiclelessWins",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Announce new records",								"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::AnnounceRecords",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Show full time on race completion",					"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::ShowMilliseconds",	"bool",			"GameMode_FASTKarts",	false,	false,	false,	false);
+	RTB_registerPref("Enable novelty items",								"FASTKarts - Gameplay",	"$Pref::Server::FASTKarts::EnableNoveltyItems",	"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
 	
 	RTB_registerPref("Horn Sounds",											"FASTKarts - Karts",	"$Pref::Server::FASTKarts::HornSounds",				"bool",			"GameMode_FASTKarts",	true,	false,	false,	false);
 	RTB_registerPref("Horn Delay",											"FASTKarts - Karts",	"$Pref::Server::FASTKarts::HornMS",					"int 0 9999",	"GameMode_FASTKarts",	50,		false,	false,	false);

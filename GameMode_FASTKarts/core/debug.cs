@@ -83,6 +83,8 @@ function serverCmdDTrackInfo(%client)
 	messageClient(%client, '', "\c6Music is " @ $FK::trackMusic);
 	messageClient(%client, '', "\c6Origin is " @ $FK::TrackOrigin[$FK::CurrentTrack]);
 	messageClient(%client, '', "\c6Type is " @ $FK::TrackType[$FK::CurrentTrack]);
+	messageClient(%client, '', "\c6Vehicle is " @ $FK::TrackVehicle[$FK::CurrentTrack]);
+	messageClient(%client, '', "\c6Round is " @ $FK::TrackRound[$FK::CurrentTrack]);
 }
 
 function FK_DumpTrackInfo()

@@ -1,6 +1,3 @@
-short term:
-- make anti support_garage script
-
 long term goals:
 - Mario-kart-like powerups, exclusive to a powerup round type that might replace the rocket round type.
 - Item boxes distributed throughout the track, just like mario kart.

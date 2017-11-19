@@ -97,9 +97,9 @@ function serverCmdSetTrack(%client, %i, %j, %k, %l, %m, %n, %o)
 	$FK::BypassType = true;
 	FK_NextTrack();
 }
-function serverCmdSetMap(%client, %i)
+function serverCmdSetMap(%client, %i, %j, %k, %l, %m, %n, %o)
 {
-	serverCmdSetTrack(%client, %i);
+	serverCmdSetTrack(%client, %i, %j, %k, %l, %m, %n, %o);
 }
 
 function serverCmdNextTrack(%client, %i)
@@ -208,20 +208,17 @@ function serverCmdVoteTrack(%client, %i, %j, %k, %l, %m, %n, %o)
 		$FK::VoteNextRound = true;
 	}
 }
-
-function serverCmdVT(%client, %i)
+function serverCmdVT(%client, %i, %j, %k, %l, %m, %n, %o)
 {
-	serverCmdVoteTrack(%client, %i);
+	serverCmdVoteTrack(%client, %i, %j, %k, %l, %m, %n, %o);
 }
-
-function serverCmdVoteMap(%client, %i)
+function serverCmdVoteMap(%client, %i, %j, %k, %l, %m, %n, %o)
 {
-	serverCmdVoteTrack(%client, %i);
+	serverCmdVoteTrack(%client, %i, %j, %k, %l, %m, %n, %o);
 }
-
-function serverCmdVM(%client, %i)
+function serverCmdVM(%client, %i, %j, %k, %l, %m, %n, %o)
 {
-	serverCmdVoteTrack(%client, %i);
+	serverCmdVoteTrack(%client, %i, %j, %k, %l, %m, %n, %o);
 }
 
 function serverCmdCurrentVote(%client)

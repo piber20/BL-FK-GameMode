@@ -220,9 +220,9 @@ function serverCmdTrackRecord(%client, %i, %j, %k, %l, %m, %n, %o)
 			messageClient(%client, '', "\c6" @ %typeString2Bouncy @ "he current server-wide record for \c2" @ FK_getTrackName(%i) @ "\c6 was done in \c2" @ %stringBouncy @ "\c6 by \c2" @ %nameBouncy @ "\c6.");
 	}
 }
-function serverCmdMapRecord(%client, %i)
+function serverCmdMapRecord(%client, %i, %j, %k, %l, %m, %n, %o)
 {
-	serverCmdTrackRecord(%client, %i);
+	serverCmdTrackRecord(%client, %i, %j, %k, %l, %m, %n, %o);
 }
 
 function serverCmdFKAdmin(%client)

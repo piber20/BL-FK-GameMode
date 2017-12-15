@@ -3,6 +3,7 @@ if($Pref::Server::FASTKarts::ForceSpeedkarts)
 else
 	exec("./karts/Karts.cs");
 
+exec("./sharkCameraFix.cs");
 exec("./zones/main.cs");
 exec("./novelty/novelty.cs");
 exec("./pgdie/pgdie.cs");

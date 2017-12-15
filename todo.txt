@@ -3,4 +3,3 @@ long term goals:
 - Item boxes distributed throughout the track, just like mario kart.
 - Battle tracks using the powerups.
 - Sounds that play when you pass a lap, reach the final lap, win the race, and potentially more.
-- MicroCars as new karts. (maybe?)

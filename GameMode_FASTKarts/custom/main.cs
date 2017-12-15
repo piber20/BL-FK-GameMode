@@ -4,3 +4,6 @@ exec("./flipVehicle.cs");
 exec("./adminalert.cs");
 exec("./persistenceBreaker.cs");
 exec("./chestCenterPrint.cs");
+
+//powerups
+exec("./powerups/rockets.cs");
